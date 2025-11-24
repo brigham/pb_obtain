@@ -2,8 +2,10 @@ import 'dart:io';
 
 import 'package:dcli/dcli.dart';
 import 'package:http/http.dart' as http;
-import 'package:pb_dtos/index.dart';
 import 'package:pb_dtos/src/tools/start_pocketbase.dart';
+
+import '../dart_dto_dumper.dart';
+import '../pocket_base_schema.dart';
 
 sealed class PocketBaseSetup {}
 
