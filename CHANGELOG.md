@@ -1,3 +1,7 @@
+# 0.1.1
+
+* `FileDto.toUri` for creating the PocketBase URI to a file.
+
 # 0.1.0
 
 * Enhanced support for files. `FileDto` offers new constructors and
