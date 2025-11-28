@@ -11,6 +11,8 @@ abstract class Dto<D extends Dto<D>> {
 
   static bool? optionalBoolToJson(bool value) => !value ? null : value;
 
+  String get id;
+
   Map<String, dynamic> toJson();
 
   List<Future<http.MultipartFile>> toFiles();

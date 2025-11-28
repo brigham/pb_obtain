@@ -3,6 +3,9 @@ import 'dart:async';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:http/http.dart' as http;
 
+import 'dto.dart';
+import 'dto_meta.dart';
+
 part 'file_dto.freezed.dart';
 
 @freezed
@@ -44,6 +47,8 @@ sealed class FileDto with _$FileDto {
   String? toJson();
 
   Future<http.MultipartFile>? toFile(String field);
+
+  Uri? toUri<D extends Dto<D>>(DtoMeta<D> meta, D dto);
 }
 
 @freezed
@@ -60,6 +65,11 @@ abstract class _RemoteFileDto extends FileDto with _$RemoteFileDto {
   @override
   Future<http.MultipartFile>? toFile(String field) {
     return null;
+  }
+
+  @override
+  Uri? toUri<D extends Dto<D>>(DtoMeta<D> meta, D dto) {
+    return Uri.parse('/api/files/${meta.collectionName}/${dto.id}/$name');
   }
 }
 
@@ -89,6 +99,9 @@ abstract class _FromStreamFileDto extends FileDto with _$FromStreamFileDto {
       contentType: contentType,
     );
   }
+
+  @override
+  Uri? toUri<D extends Dto<D>>(DtoMeta<D> meta, D dto) => null;
 }
 
 @freezed
@@ -115,6 +128,9 @@ abstract class _FromBytesFileDto extends FileDto with _$FromBytesFileDto {
       contentType: contentType,
     );
   }
+
+  @override
+  Uri? toUri<D extends Dto<D>>(DtoMeta<D> meta, D dto) => null;
 }
 
 @freezed
@@ -141,6 +157,9 @@ abstract class _FromStringFileDto extends FileDto with _$FromStringFileDto {
       contentType: contentType,
     );
   }
+
+  @override
+  Uri? toUri<D extends Dto<D>>(DtoMeta<D> meta, D dto) => null;
 }
 
 @freezed
@@ -168,4 +187,7 @@ abstract class _FromPathFileDto extends FileDto with _$FromPathFileDto {
       contentType: contentType,
     );
   }
+
+  @override
+  Uri? toUri<D extends Dto<D>>(DtoMeta<D> meta, D dto) => null;
 }
