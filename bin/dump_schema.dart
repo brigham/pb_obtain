@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:args/args.dart';
 import 'package:pb_dtos/src/tools/dump_schema.dart';
+import 'package:pb_dtos/src/tools/obtain_pocketbase.dart';
 import 'package:pb_dtos/src/tools/start_pocketbase.dart';
 import 'package:yaml/yaml.dart';
 
@@ -13,9 +14,8 @@ void main(List<String> arguments) async {
       abbr: 's',
       defaultsTo: '',
       help:
-          'Suffix to append to generated files. Useful to avoid IDEs treating goldens as real Dart files.',
-    )
-    ..addOption(
+      'Suffix to append to generated files. Useful to avoid IDEs treating goldens as real Dart files.',
+    )..addOption(
       'config',
       help: 'Path to the config file.',
       defaultsTo: 'pb_dto_gen.yaml',
@@ -44,7 +44,22 @@ void main(List<String> arguments) async {
     pocketBaseSetup = PocketBaseUrl(url: pocketbaseUrl);
   } else if (pocketbaseSpec != null) {
     var pocketbaseConfig = pocketbaseSpec['config'] as String;
-    var pocketbaseExecutable = pocketbaseSpec['executable'] as String;
+    var pocketbaseExecutable = pocketbaseSpec['executable'] as String?;
+    var obtainSpec = pocketbaseSpec['obtain'] as YamlMap?;
+    if ((pocketbaseExecutable == null) == (obtainSpec == null)) {
+      print(
+          "Error: One and only one of 'executable' and 'obtain' must be specified in the config file");
+      exit(1);
+    }
+    ObtainPocketBaseConfig? obtainConfig;
+    if (obtainSpec != null) {
+      var pocketbaseVersion = obtainSpec['version'] as String;
+      var pocketbaseDownloadDirectory = obtainSpec['release_dir'] as String;
+      obtainConfig = ObtainPocketBaseConfig(
+        githubTag: pocketbaseVersion,
+        downloadPath: pocketbaseDownloadDirectory,
+      );
+    }
     var pocketbasePort = pocketbaseSpec['port'] as int;
     pocketBaseSetup = PocketBaseSpec(
       LaunchPocketBaseConfig(
@@ -53,6 +68,7 @@ void main(List<String> arguments) async {
         pocketBasePort: pocketbasePort,
         detached: true,
       ),
+      obtainPocketBaseConfig: obtainConfig,
     );
   } else {
     exit(1);

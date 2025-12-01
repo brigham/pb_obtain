@@ -36,9 +36,11 @@ Future<Map<String, FileCoverage>> readCoverage(String filename) async {
   }
 
   var headerRowIndex = 0;
-  if (rows.isNotEmpty && (rows.first.isEmpty || rows.first[0].toString() != 'filepath')) {
-    headerRowIndex = rows
-        .indexWhere((row) => row.isNotEmpty && row[0].toString() == 'filepath');
+  if (rows.isNotEmpty &&
+      (rows.first.isEmpty || rows.first[0].toString() != 'filepath')) {
+    headerRowIndex = rows.indexWhere(
+      (row) => row.isNotEmpty && row[0].toString() == 'filepath',
+    );
   }
 
   if (headerRowIndex == -1) {
@@ -141,6 +143,14 @@ void main() async {
       );
     }
   }
+
+  regressions.removeWhere(
+    (key, value) => {
+      // Testing this requires real HTTP calls, so we don't want to enforce
+      // coverage.
+      "lib/src/tools/obtain_pocketbase.dart",
+    }.contains(key),
+  );
 
   if (regressions.isEmpty) {
     exit(0);

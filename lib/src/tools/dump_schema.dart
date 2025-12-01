@@ -17,8 +17,8 @@ class PocketBaseUrl extends PocketBaseSetup {
 }
 
 class PocketBaseSpec extends PocketBaseSetup {
-  final LaunchPocketBaseConfig launchPocketBaseConfig;
   final ObtainPocketBaseConfig? obtainPocketBaseConfig;
+  final LaunchPocketBaseConfig launchPocketBaseConfig;
 
   PocketBaseSpec(this.launchPocketBaseConfig, {this.obtainPocketBaseConfig});
 }
