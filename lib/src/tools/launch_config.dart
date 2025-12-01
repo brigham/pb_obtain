@@ -53,7 +53,8 @@ class LaunchConfig with _$LaunchConfig {
     this.homeDirectory,
   });
 
-  const LaunchConfig.empty() : this._(templateDir: "", port: 0, detached: false);
+  const LaunchConfig.empty()
+    : this._(templateDir: "", port: 0, detached: false);
 
   const LaunchConfig.executable({
     required this.templateDir,

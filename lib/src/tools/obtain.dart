@@ -126,9 +126,7 @@ Future<String> obtain(ObtainConfig config) async {
     }
 
     if (expectedHash == null) {
-      _log(
-        'Warning: Could not find checksum for $targetName in checksums.txt',
-      );
+      _log('Warning: Could not find checksum for $targetName in checksums.txt');
     } else {
       final digest = sha256.convert(zipBytes);
       if (digest.toString() != expectedHash) {

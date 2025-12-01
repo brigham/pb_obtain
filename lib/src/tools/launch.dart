@@ -4,6 +4,7 @@ import 'package:dcli/dcli.dart';
 import 'package:path/path.dart' as p;
 
 import 'launch_config.dart';
+import 'obtain.dart';
 
 void copyDirectoryContents(String sourceDir, String destDir) {
   if (!exists(sourceDir)) return;
@@ -25,14 +26,17 @@ void _log(String message) {
 Future<Process> launch(LaunchConfig config) async {
   final port = config.port;
   final templateDir = config.templateDir;
-  final executable = config.executable;
-  final dataDirectory = config.homeDirectory;
 
-  if (executable == null) {
-    throw ArgumentError(
-      'pocketBaseExecutable must be provided in LaunchPocketBaseConfig',
-    );
+  final String executable;
+  if (config.obtain != null) {
+    executable = await obtain(config.obtain!);
+  } else if (config.executable != null) {
+    executable = config.executable!.path;
+  } else {
+    throw Exception("No way to find a PocketBase binary.");
   }
+
+  final dataDirectory = config.homeDirectory;
 
   String pbDir;
   bool tempDir = false;
@@ -57,7 +61,7 @@ Future<Process> launch(LaunchConfig config) async {
   if (exists(pocketbaseLink)) {
     delete(pocketbaseLink);
   }
-  createSymLink(targetPath: executable.path, linkPath: pocketbaseLink);
+  createSymLink(targetPath: executable, linkPath: pocketbaseLink);
 
   copyDirectoryContents(
     p.join(templateDir, 'pb_migrations'),

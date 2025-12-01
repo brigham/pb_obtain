@@ -7,10 +7,9 @@ import 'package:args/args.dart';
 import 'package:dcli/dcli.dart';
 import 'package:path/path.dart' as p;
 import 'package:pb_obtain/src/tools/executable_config.dart';
+import 'package:pb_obtain/src/tools/launch.dart';
 import 'package:pb_obtain/src/tools/launch_config.dart';
 import 'package:pb_obtain/src/tools/obtain_config.dart';
-import 'package:pb_obtain/src/tools/obtain.dart';
-import 'package:pb_obtain/src/tools/launch.dart';
 import 'package:pb_obtain/src/tools/validate_exception.dart';
 import 'package:yaml/yaml.dart';
 
@@ -28,7 +27,8 @@ void main(List<String> args) async {
       'template-dir',
       abbr: 'c',
       defaultsTo: 'pocketbase',
-      help: 'PocketBase template directory. pb_migrations, pb_hooks, and pb_public are copied to --output.',
+      help:
+          'PocketBase template directory. pb_migrations, pb_hooks, and pb_public are copied to --output.',
     )
     ..addOption(
       'executable',
@@ -47,7 +47,12 @@ void main(List<String> args) async {
       defaultsTo: p.join(env['HOME']!, 'develop', 'pocketbase'),
       help: 'Where to download binary specified by --tag.',
     )
-    ..addOption('home-dir', abbr: 'h', help: 'The PocketBase home directory, where pb_data will be created and template files are copied.')
+    ..addOption(
+      'home-dir',
+      abbr: 'h',
+      help:
+          'The PocketBase home directory, where pb_data will be created and template files are copied.',
+    )
     ..addOption(
       'port',
       abbr: 'p',
@@ -93,17 +98,20 @@ void main(List<String> args) async {
   config ??= LaunchConfig.empty();
   if (pickedAny) {
     config = config.copyWith(
-        templateDir: templateDir ?? config.templateDir,
-        executable: executable != null
-            ? ExecutableConfig(path: executable)
-            : config.executable,
-        obtain: tag != null
-            ? ObtainConfig(githubTag: tag, downloadDir: downloadDir!)
-            : config.obtain,
-        homeDirectory: homeDir ?? config.homeDirectory,
-        port: port ?? config.port);
+      templateDir: templateDir ?? config.templateDir,
+      executable: executable != null
+          ? ExecutableConfig(path: executable)
+          : config.executable,
+      obtain: tag != null
+          ? ObtainConfig(githubTag: tag, downloadDir: downloadDir!)
+          : config.obtain,
+      homeDirectory: homeDir ?? config.homeDirectory,
+      port: port ?? config.port,
+    );
     String asYaml = jsonEncode(config.toJson());
-    stderr.writeln("To make this configuration reusable, copy/paste the following into a YAML file:");
+    stderr.writeln(
+      "To make this configuration reusable, copy/paste the following into a YAML file:",
+    );
     stderr.writeln(asYaml);
   }
 
@@ -114,13 +122,7 @@ void main(List<String> args) async {
     exit(1);
   }
 
-  var launchConfig = config;
-  if (config.obtain != null) {
-    var executablePath = await obtain(config.obtain!);
-    launchConfig = launchConfig.copyWith(executable: ExecutableConfig(path: executablePath), obtain: null);
-  }
-
-  var process = await launch(launchConfig);
+  var process = await launch(config);
 
   await process.exitCode;
 }
