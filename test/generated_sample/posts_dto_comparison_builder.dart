@@ -27,7 +27,7 @@ class PostsDtoComparisonBuilder<D extends Dto<D>>
         fieldPath.terminate(PostsDtoFieldEnum.link),
         handler,
       );
-  TerminalRelationComparisonBuilder<D, Map<String, dynamic>> location() =>
+  TerminalRelationComparisonBuilder<D, dynamic> location() =>
       TerminalRelationComparisonBuilder(
         fieldPath.terminate(PostsDtoFieldEnum.location),
         handler,
@@ -86,11 +86,11 @@ class PostsDtoMultirelComparisonBuilder<D extends Dto<D>>
         fieldPath.terminate(PostsDtoFieldEnum.link),
         handler,
       );
-  TerminalMultivalRelationComparisonBuilder<D, Map<String, dynamic>>
-  location() => TerminalMultivalRelationComparisonBuilder(
-    fieldPath.terminate(PostsDtoFieldEnum.location),
-    handler,
-  );
+  TerminalMultivalRelationComparisonBuilder<D, dynamic> location() =>
+      TerminalMultivalRelationComparisonBuilder(
+        fieldPath.terminate(PostsDtoFieldEnum.location),
+        handler,
+      );
   TerminalMultivalRelationComparisonBuilder<D, num> reviewStars() =>
       TerminalMultivalRelationComparisonBuilder(
         fieldPath.terminate(PostsDtoFieldEnum.reviewStars),

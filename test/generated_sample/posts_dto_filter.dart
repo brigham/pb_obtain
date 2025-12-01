@@ -14,7 +14,7 @@ class PostsDtoFilter extends DtoFilter<PostsDto> {
       ComparisonBuilder.field(PostsDtoFieldEnum.photo, add);
   ComparisonBuilder<PostsDto, String> link() =>
       ComparisonBuilder.field(PostsDtoFieldEnum.link, add);
-  ComparisonBuilder<PostsDto, Map<String, dynamic>> location() =>
+  ComparisonBuilder<PostsDto, dynamic> location() =>
       ComparisonBuilder.field(PostsDtoFieldEnum.location, add);
   ComparisonBuilder<PostsDto, num> reviewStars() =>
       ComparisonBuilder.field(PostsDtoFieldEnum.reviewStars, add);

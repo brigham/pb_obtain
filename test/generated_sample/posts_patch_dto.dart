@@ -44,7 +44,7 @@ class PostsPatchDto with _$PostsPatchDto implements PatchDto<PostsDto> {
   String? link;
 
   @override
-  Map<String, dynamic>? location;
+  dynamic location;
 
   @override
   @JsonKey(name: 'review_stars')
