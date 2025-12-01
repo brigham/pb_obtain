@@ -16,7 +16,7 @@ PostsPatchDto _$PostsPatchDtoFromJson(Map<String, dynamic> json) =>
           ? null
           : FileDto.fromJson(json['photo'] as String),
       link: json['link'] as String?,
-      location: json['location'] as Map<String, dynamic>?,
+      location: json['location'],
       reviewStars: json['review_stars'] as num?,
       reviewStarsAddend: json['review_stars+'] as num?,
       reviewStarsSubtrahend: json['review_stars-'] as num?,

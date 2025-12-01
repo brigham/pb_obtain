@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$PostsDto {
 
- RelationDto<UsersDto> get poster; String get message; FileDto? get photo; String get link; Map<String, dynamic>? get location; num get reviewStars; List<RelationDto<UsersDto>> get tagged; bool get draft; DateTime? get scheduled; String get id; PostsExpandDto? get expand;
+ RelationDto<UsersDto> get poster; String get message; FileDto? get photo; String get link; dynamic get location; num get reviewStars; List<RelationDto<UsersDto>> get tagged; bool get draft; DateTime? get scheduled; String get id; PostsExpandDto? get expand;
 /// Create a copy of PostsDto
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -46,7 +46,7 @@ abstract mixin class $PostsDtoCopyWith<$Res>  {
   factory $PostsDtoCopyWith(PostsDto value, $Res Function(PostsDto) _then) = _$PostsDtoCopyWithImpl;
 @useResult
 $Res call({
- RelationDto<UsersDto> poster, String message, FileDto? photo, String link, Map<String, dynamic>? location, num reviewStars, List<RelationDto<UsersDto>> tagged, bool draft, DateTime? scheduled, String id, PostsExpandDto? expand
+ RelationDto<UsersDto> poster, String message, FileDto? photo, String link, dynamic location, num reviewStars, List<RelationDto<UsersDto>> tagged, bool draft, DateTime? scheduled, String id, PostsExpandDto? expand
 });
 
 
@@ -70,7 +70,7 @@ as RelationDto<UsersDto>,message: null == message ? _self.message : message // i
 as String,photo: freezed == photo ? _self.photo : photo // ignore: cast_nullable_to_non_nullable
 as FileDto?,link: null == link ? _self.link : link // ignore: cast_nullable_to_non_nullable
 as String,location: freezed == location ? _self.location : location // ignore: cast_nullable_to_non_nullable
-as Map<String, dynamic>?,reviewStars: null == reviewStars ? _self.reviewStars : reviewStars // ignore: cast_nullable_to_non_nullable
+as dynamic,reviewStars: null == reviewStars ? _self.reviewStars : reviewStars // ignore: cast_nullable_to_non_nullable
 as num,tagged: null == tagged ? _self.tagged : tagged // ignore: cast_nullable_to_non_nullable
 as List<RelationDto<UsersDto>>,draft: null == draft ? _self.draft : draft // ignore: cast_nullable_to_non_nullable
 as bool,scheduled: freezed == scheduled ? _self.scheduled : scheduled // ignore: cast_nullable_to_non_nullable

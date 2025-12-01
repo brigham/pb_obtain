@@ -62,7 +62,7 @@ const List<PocketbaseTypeBase> _allTypes = [
     '"https://www.google.com/"',
     toJsonFunction: "Dto.optionalStringToJson",
   ),
-  PocketbaseType('json', 'Map<String, dynamic>?', 'null', '{"a": 5}'),
+  PocketbaseType('json', 'dynamic', 'null', '{"a": 5}'),
   PocketbaseType(
     'editor',
     'String',

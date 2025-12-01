@@ -15,7 +15,7 @@ PostsDto _$PostsDtoFromJson(Map<String, dynamic> json) => PostsDto(
       ? null
       : FileDto.fromJson(json['photo'] as String),
   link: json['link'] as String? ?? "",
-  location: json['location'] as Map<String, dynamic>? ?? null,
+  location: json['location'] ?? null,
   reviewStars: json['review_stars'] as num? ?? 0,
   tagged:
       (json['tagged'] as List<dynamic>?)

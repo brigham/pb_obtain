@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$PostsPatchDto {
 
- RelationDto<UsersDto>? get poster; set poster(RelationDto<UsersDto>? value); String? get message; set message(String? value); FileDto? get photo; set photo(FileDto? value); String? get link; set link(String? value); Map<String, dynamic>? get location; set location(Map<String, dynamic>? value); num? get reviewStars; set reviewStars(num? value); num? get reviewStarsAddend; set reviewStarsAddend(num? value); num? get reviewStarsSubtrahend; set reviewStarsSubtrahend(num? value); List<RelationDto<UsersDto>>? get tagged; set tagged(List<RelationDto<UsersDto>>? value); List<RelationDto<UsersDto>>? get taggedRemovals; set taggedRemovals(List<RelationDto<UsersDto>>? value); List<RelationDto<UsersDto>>? get taggedPrefix; set taggedPrefix(List<RelationDto<UsersDto>>? value); List<RelationDto<UsersDto>>? get taggedSuffix; set taggedSuffix(List<RelationDto<UsersDto>>? value); bool? get draft; set draft(bool? value); DateTime? get scheduled; set scheduled(DateTime? value);
+ RelationDto<UsersDto>? get poster; set poster(RelationDto<UsersDto>? value); String? get message; set message(String? value); FileDto? get photo; set photo(FileDto? value); String? get link; set link(String? value); dynamic? get location; set location(dynamic? value); num? get reviewStars; set reviewStars(num? value); num? get reviewStarsAddend; set reviewStarsAddend(num? value); num? get reviewStarsSubtrahend; set reviewStarsSubtrahend(num? value); List<RelationDto<UsersDto>>? get tagged; set tagged(List<RelationDto<UsersDto>>? value); List<RelationDto<UsersDto>>? get taggedRemovals; set taggedRemovals(List<RelationDto<UsersDto>>? value); List<RelationDto<UsersDto>>? get taggedPrefix; set taggedPrefix(List<RelationDto<UsersDto>>? value); List<RelationDto<UsersDto>>? get taggedSuffix; set taggedSuffix(List<RelationDto<UsersDto>>? value); bool? get draft; set draft(bool? value); DateTime? get scheduled; set scheduled(DateTime? value);
 /// Create a copy of PostsPatchDto
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -45,7 +45,7 @@ abstract mixin class $PostsPatchDtoCopyWith<$Res>  {
   factory $PostsPatchDtoCopyWith(PostsPatchDto value, $Res Function(PostsPatchDto) _then) = _$PostsPatchDtoCopyWithImpl;
 @useResult
 $Res call({
- RelationDto<UsersDto>? poster, String? message, FileDto? photo, String? link, Map<String, dynamic>? location, num? reviewStars, num? reviewStarsAddend, num? reviewStarsSubtrahend, List<RelationDto<UsersDto>>? tagged, List<RelationDto<UsersDto>>? taggedRemovals, List<RelationDto<UsersDto>>? taggedPrefix, List<RelationDto<UsersDto>>? taggedSuffix, bool? draft, DateTime? scheduled
+ RelationDto<UsersDto>? poster, String? message, FileDto? photo, String? link, dynamic location, num? reviewStars, num? reviewStarsAddend, num? reviewStarsSubtrahend, List<RelationDto<UsersDto>>? tagged, List<RelationDto<UsersDto>>? taggedRemovals, List<RelationDto<UsersDto>>? taggedPrefix, List<RelationDto<UsersDto>>? taggedSuffix, bool? draft, DateTime? scheduled
 });
 
 
@@ -69,7 +69,7 @@ as RelationDto<UsersDto>?,message: freezed == message ? _self.message : message 
 as String?,photo: freezed == photo ? _self.photo : photo // ignore: cast_nullable_to_non_nullable
 as FileDto?,link: freezed == link ? _self.link : link // ignore: cast_nullable_to_non_nullable
 as String?,location: freezed == location ? _self.location : location // ignore: cast_nullable_to_non_nullable
-as Map<String, dynamic>?,reviewStars: freezed == reviewStars ? _self.reviewStars : reviewStars // ignore: cast_nullable_to_non_nullable
+as dynamic,reviewStars: freezed == reviewStars ? _self.reviewStars : reviewStars // ignore: cast_nullable_to_non_nullable
 as num?,reviewStarsAddend: freezed == reviewStarsAddend ? _self.reviewStarsAddend : reviewStarsAddend // ignore: cast_nullable_to_non_nullable
 as num?,reviewStarsSubtrahend: freezed == reviewStarsSubtrahend ? _self.reviewStarsSubtrahend : reviewStarsSubtrahend // ignore: cast_nullable_to_non_nullable
 as num?,tagged: freezed == tagged ? _self.tagged : tagged // ignore: cast_nullable_to_non_nullable

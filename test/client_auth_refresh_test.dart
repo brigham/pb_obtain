@@ -44,9 +44,12 @@ void main() {
 
       // We'll use the superuser to create a user first to ensure it exists.
       var adminApi = PocketBaseApiClient(api.raw.baseUrl);
-      await adminApi.raw.collection('_superusers').authWithPassword('test@example.com', '1234567890');
+      await adminApi.raw
+          .collection('_superusers')
+          .authWithPassword('test@example.com', '1234567890');
 
-      var email = 'refresh_test_${DateTime.now().millisecondsSinceEpoch}@example.com';
+      var email =
+          'refresh_test_${DateTime.now().millisecondsSinceEpoch}@example.com';
       var password = 'password123';
 
       var createdUser = await adminApi.create(

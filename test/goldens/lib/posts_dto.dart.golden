@@ -32,7 +32,7 @@ enum PostsDtoFieldEnum<V> implements DtoTypedField<PostsDto, V> {
   message<String>('message'),
   photo<FileDto>('photo'),
   link<String>('link'),
-  location<Map<String, dynamic>>('location'),
+  location<dynamic>('location'),
   reviewStars<num>('review_stars'),
   tagged<RelationDto<UsersDto>>('tagged'),
   draft<bool>('draft'),
@@ -137,7 +137,7 @@ class PostsDto with _$PostsDto implements Dto<PostsDto> {
   @override
   final String link;
   @override
-  final Map<String, dynamic>? location;
+  final dynamic location;
   @JsonKey(name: 'review_stars', toJson: Dto.optionalNumToJson)
   @override
   final num reviewStars;
