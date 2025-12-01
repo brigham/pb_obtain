@@ -1,3 +1,13 @@
+# 0.3.0
+
+* PocketBase `json` fields are now typed as `dynamic` instead of
+  a nullable map.
+* Support for using a PocketBase release version in multiple places.
+  When set, the binary will be downloaded to a user-selected
+  location and used.
+* Better handling when tests fail to stop PocketBase server
+  during tear down.
+
 # 0.2.0
 
 * `PocketBaseApiClient.watch` now has all expected parameters. This
