@@ -394,7 +394,7 @@ packages:
     source: hosted
     version: "3.0.1"
   json_annotation:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: json_annotation
       sha256: "1ce844379ca14835a50d2f019a3099f419082cfdd231cd86a142af94dd5c6bb1"
@@ -457,14 +457,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.5.1"
-  mustache_template:
-    dependency: "direct main"
-    description:
-      name: mustache_template
-      sha256: daa42be75f2ccfb287c24a75e7ac594f2ea0b32bf9ebe7c15154aa45b2dfb2de
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.2"
   native_synchronization_temp:
     dependency: transitive
     description:
@@ -497,14 +489,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.9.1"
-  pocketbase:
-    dependency: "direct main"
-    description:
-      name: pocketbase
-      sha256: "85282448be07e1920742a3272737b08778e5548ada8cd5ada82d0a0228347d0c"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.23.0+1"
   pool:
     dependency: transitive
     description:
@@ -553,14 +537,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.5.0"
-  recase:
-    dependency: "direct main"
-    description:
-      name: recase
-      sha256: e4eb4ec2dcdee52dcf99cb4ceabaffc631d7424ee55e56f280bc039737f89213
-      url: "https://pub.dev"
-    source: hosted
-    version: "4.1.0"
   scope:
     dependency: transitive
     description:

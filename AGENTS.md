@@ -21,42 +21,25 @@ Always commit the updated COVERAGE.csv file as part of your changes.
 
 ## Introduction
 
-This is a Dart project for generating Data Transfer Objects (DTOs) from a PocketBase schema.
+This is a Dart project for downloading and running releases of PocketBase.
 
 ## Development Workflow
 
-### PocketBase Server (`bin/start_pocketbase.sh`)
+### PocketBase Server (`bin/start_pocketbase.dart`)
 
-The `bin/start_pocketbase.sh` script can be used to start the PocketBase server independently.
+The `bin/start_pocketbase.dart` script can be used to start the PocketBase server independently.
 
 The agent_setup.sh script has placed the pocketbase binary at $HOME/develop/pocketbase/pocketbase, which
 is the default for the script.
 
 * **Persistent Data:** To start the server with a persistent database, provide a directory path:
   ```bash
-  dart run bin/start_pocketbase.dart --config test/test_schema --output .pocketbase_data
+  dart run bin/launch.dart --config PB_CONFIG --output .pocketbase_data
   ```
 * **Temporary Data:** To start the server with a temporary database directory, run the script without any arguments:
   ```bash
-  dart run bin/start_pocketbase.dart --config test/test_schema
+  dart run bin/launch.dart --config PB_CONFIG
   ```
-
-### Code Generation
-
-The project uses `build_runner` to generate code for `json_serializable` and `mockito`. To run the code generator, use
-the following command:
-
-```bash
-dart run build_runner build --delete-conflicting-outputs
-```
-
-### Testing
-
-- **Framework:** The project uses the `test` framework for unit testing.
-- **Running Tests:** To run all tests, use the command `dart test`. For more detailed output on failing tests, use
-  `dart test --reporter expanded`.
-- **Test Structure:** The `test/` directory mirrors the `lib/` directory structure.
-- **Mocks:** The project uses the `mockito` package to generate mock objects for testing.
 
 ### Code Style
 

@@ -1,33 +1,5 @@
-# 0.3.0
+# 0.4.0
 
-* PocketBase `json` fields are now typed as `dynamic` instead of
-  a nullable map.
-* Support for using a PocketBase release version in multiple places.
-  When set, the binary will be downloaded to a user-selected
-  location and used.
-* Better handling when tests fail to stop PocketBase server
-  during tear down.
+* Fork from `pb_dtos`, removing unrelated code.
+* Clean up naming.
 
-# 0.2.0
-
-* `PocketBaseApiClient.watch` now has all expected parameters. This
-  required making `topic` a named parameter.
-* Added `PocketBaseApiClient.authRefresh`.
-
-# 0.1.1
-
-* `FileDto.toUri` for creating the PocketBase URI to a file.
-
-# 0.1.0
-
-* Enhanced support for files. `FileDto` offers new constructors and
-  `PocketBaseApiClient` automatically populates files.
-
-# 0.0.2
-
-* Fixes for start_pocketbase.dart output directory reusability.
-* Testing improvements.
-
-# 0.0.1
-
-* Experimental initial release.
