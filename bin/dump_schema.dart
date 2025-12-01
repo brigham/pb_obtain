@@ -73,5 +73,5 @@ void main(List<String> arguments) async {
     credentials: credentials,
   );
 
-  dumpSchema(dumpSchemaConfig);
+  await dumpSchema(dumpSchemaConfig);
 }

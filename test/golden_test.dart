@@ -1,9 +1,12 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:dcli/dcli.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as p;
 import 'package:pb_dtos/src/tools/dump_schema.dart';
+import 'package:pb_dtos/src/tools/start_pocketbase.dart';
+import 'package:pocketbase/pocketbase.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -20,35 +23,29 @@ void main() {
       goldenDir = Directory(p.join('test', 'goldens'));
       print('Temp directory for generated files: ${tempDir.path}');
 
-      // Start PocketBase.
-      print('Starting PocketBase...');
-      pbProcess = await Process.start(
-        p.join(Directory.current.path, 'bin', 'start_pocketbase.sh'),
-        ['--config=test/test_schema'],
+      expect(
+        await _isPocketBaseRunning(),
+        isFalse,
+        reason: "PocketBase server was already running.",
       );
 
-      // Pipe server output to the console for debugging
-      pbProcess!.stdout.transform(SystemEncoding().decoder).listen(print);
-      pbProcess!.stderr.transform(SystemEncoding().decoder).listen(print);
+      // Start PocketBase.
+      var launchConfig = LaunchPocketBaseConfig(
+        configurationDirectory: "test/test_schema",
+        pocketBaseExecutable: p.join(
+          env['HOME']!,
+          'develop',
+          'pocketbase',
+          'pocketbase',
+        ),
+        pocketBasePort: 8696,
+        detached: true,
+      );
+      pbProcess = await launchPocketbase(launchConfig);
 
       // Wait for the server to be healthy by polling the health endpoint.
       print('Waiting for PocketBase to become healthy...');
-      final healthCheckUrl = Uri.parse('http://127.0.0.1:8696/api/health');
-      var serverReady = false;
-      for (var i = 0; i < 20; i++) {
-        // 20-second timeout
-        try {
-          final response = await http.get(healthCheckUrl);
-          if (response.statusCode == 200) {
-            print('PocketBase is healthy.');
-            serverReady = true;
-            break;
-          }
-        } catch (e) {
-          // Ignore connection errors
-        }
-        await Future.delayed(const Duration(seconds: 1));
-      }
+      bool serverReady = await _isPocketBaseRunning();
 
       if (!serverReady) {
         fail('PocketBase server did not become healthy in time.');
@@ -73,7 +70,15 @@ void main() {
 
     Future<void> stop() async {
       print('Stopping PocketBase...');
-      pbProcess?.kill(ProcessSignal.sigkill);
+      var process = pbProcess;
+      if (process != null) {
+        process.kill(ProcessSignal.sigkill);
+        expect(
+          await _isPocketBaseStopped(),
+          isTrue,
+          reason: "Could not stop PocketBase server.",
+        );
+      }
       if (!testFailed) {
         print('Deleting temp directory: ${tempDir.path}');
         tempDir.deleteSync(recursive: true);
@@ -177,4 +182,48 @@ void main() {
       }
     });
   });
+}
+
+/// Waits up to 20 seconds until PocketBase is running.
+Future<bool> _isPocketBaseRunning() async {
+  final healthCheckUrl = Uri.parse('http://127.0.0.1:8696/api/health');
+  var serverReady = false;
+  for (var i = 0; i < 20; i++) {
+    // 20-second timeout
+    try {
+      final response = await http.get(healthCheckUrl);
+      if (response.statusCode == 200) {
+        print('PocketBase is healthy.');
+        serverReady = true;
+        break;
+      }
+    } catch (e) {
+      // Ignore connection errors
+    }
+    await Future.delayed(const Duration(seconds: 1));
+  }
+  return serverReady;
+}
+
+/// Waits up to 20 seconds until PocketBase is stopped.
+Future<bool> _isPocketBaseStopped() async {
+  final healthCheckUrl = Uri.parse('http://127.0.0.1:8696/api/health');
+  var serverReady = true;
+  for (var i = 0; i < 20; i++) {
+    // 20-second timeout
+    try {
+      final response = await http.get(healthCheckUrl);
+      if (response.statusCode == 200) {
+        print('PocketBase is healthy.');
+        serverReady = true;
+      }
+    } on ClientException {
+      // In this case, it's still running.
+    } catch (e) {
+      serverReady = false;
+      break;
+    }
+    await Future.delayed(const Duration(seconds: 1));
+  }
+  return !serverReady;
 }
