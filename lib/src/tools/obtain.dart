@@ -6,20 +6,31 @@ import 'package:crypto/crypto.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as p;
 import 'obtain_config.dart';
+import 'system_info.dart';
 
 void _log(String message) {
   stderr.writeln(message);
 }
 
-Future<String> obtain(ObtainConfig config, {http.Client? httpClient}) async {
+Future<String> obtain(
+  ObtainConfig config, {
+  http.Client? httpClient,
+  OsInfo? osInfo,
+  ArchitectureInfo? architectureInfo,
+}) async {
   final client = httpClient ?? http.Client();
+  final osInfoImpl = osInfo ?? OsInfo();
+  final archInfoImpl = architectureInfo ?? ArchitectureInfo();
+
   try {
     final downloadDir = Directory(p.join(config.downloadDir, config.githubTag));
     if (!downloadDir.existsSync()) {
       downloadDir.createSync(recursive: true);
     }
 
-    final executableName = Platform.isWindows ? 'pocketbase.exe' : 'pocketbase';
+    final executableName = osInfoImpl.isWindows
+        ? 'pocketbase.exe'
+        : 'pocketbase';
     final executablePath = p.join(downloadDir.path, executableName);
 
     if (File(executablePath).existsSync()) {
@@ -30,34 +41,8 @@ Future<String> obtain(ObtainConfig config, {http.Client? httpClient}) async {
     _log('Obtaining PocketBase ${config.githubTag}...');
 
     // 1. Identify Platform
-    String os;
-    if (Platform.isLinux) {
-      os = 'linux';
-    } else if (Platform.isMacOS) {
-      os = 'darwin';
-    } else if (Platform.isWindows) {
-      os = 'windows';
-    } else {
-      throw UnsupportedError(
-        'Unsupported operating system: ${Platform.operatingSystem}',
-      );
-    }
-
-    String arch;
-    final version = Platform.version.toLowerCase();
-    if (version.contains('arm64') || version.contains('aarch64')) {
-      arch = 'arm64';
-    } else if (version.contains('x64') || version.contains('x86_64')) {
-      arch = 'amd64';
-    } else {
-      if (Platform.isMacOS &&
-          (await Process.run('uname', ['-m'])).stdout.toString().trim() ==
-              'arm64') {
-        arch = 'arm64';
-      } else {
-        arch = 'amd64'; // Defaulting to amd64 for now
-      }
-    }
+    final os = osInfoImpl.osName;
+    final arch = await archInfoImpl.getCpuArchitecture();
 
     // 2. Fetch Release Info
     final releaseUrl =
@@ -154,7 +139,7 @@ Future<String> obtain(ObtainConfig config, {http.Client? httpClient}) async {
             ..createSync(recursive: true)
             ..writeAsBytesSync(data);
 
-          if (!Platform.isWindows) {
+          if (!osInfoImpl.isWindows) {
             await Process.run('chmod', ['+x', executablePath]);
           }
         }
