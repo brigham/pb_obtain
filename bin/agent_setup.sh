@@ -11,16 +11,4 @@ echo 'deb [signed-by=/usr/share/keyrings/dart.gpg arch=amd64] https://storage.go
 sudo apt-get update -y
 sudo apt-get install -y dart=3.10.0-1
 
-# Set up pocketbase.
-POCKETBASE_URL="https://github.com/pocketbase/pocketbase/releases/download/v0.31.0/pocketbase_0.31.0_linux_amd64.zip"
-ARCH=$(uname -m)
-
-if [ "$ARCH" = "aarch64" ]; then
-    POCKETBASE_URL="https://github.com/pocketbase/pocketbase/releases/download/v0.31.0/pocketbase_0.31.0_linux_arm64.zip"
-fi
-curl -L "$POCKETBASE_URL" -o "$HOME/develop/pocketbase.zip"
-unzip -o "$HOME/develop/pocketbase.zip" -d "$HOME/develop/pocketbase"
-rm "$HOME/develop/pocketbase.zip"
-mkdir -p "$HOME/develop/pocketbase/pb_migrations"
-cp /app/test/test_schema/dev_migrations/* "$HOME/develop/pocketbase/pb_migrations/"
-cp /app/test/test_schema/pb_migrations/* "$HOME/develop/pocketbase/pb_migrations/"
+dart run bin/obtain.dart --tag v0.31.0 --release-dir "$HOME/develop/pocketbase"
