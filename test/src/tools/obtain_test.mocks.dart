@@ -10,6 +10,7 @@ import 'dart:typed_data' as _i6;
 import 'package:http/http.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i5;
+import 'package:pb_obtain/src/tools/system_info.dart' as _i7;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -280,4 +281,57 @@ class MockClient extends _i1.Mock implements _i2.Client {
     Invocation.method(#close, []),
     returnValueForMissingStub: null,
   );
+}
+
+/// A class which mocks [OsInfo].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockOsInfo extends _i1.Mock implements _i7.OsInfo {
+  @override
+  String get osName =>
+      (super.noSuchMethod(
+            Invocation.getter(#osName),
+            returnValue: _i5.dummyValue<String>(
+              this,
+              Invocation.getter(#osName),
+            ),
+            returnValueForMissingStub: _i5.dummyValue<String>(
+              this,
+              Invocation.getter(#osName),
+            ),
+          )
+          as String);
+
+  @override
+  bool get isWindows =>
+      (super.noSuchMethod(
+            Invocation.getter(#isWindows),
+            returnValue: false,
+            returnValueForMissingStub: false,
+          )
+          as bool);
+}
+
+/// A class which mocks [ArchitectureInfo].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockArchitectureInfo extends _i1.Mock implements _i7.ArchitectureInfo {
+  @override
+  _i3.Future<String> getCpuArchitecture() =>
+      (super.noSuchMethod(
+            Invocation.method(#getCpuArchitecture, []),
+            returnValue: _i3.Future<String>.value(
+              _i5.dummyValue<String>(
+                this,
+                Invocation.method(#getCpuArchitecture, []),
+              ),
+            ),
+            returnValueForMissingStub: _i3.Future<String>.value(
+              _i5.dummyValue<String>(
+                this,
+                Invocation.method(#getCpuArchitecture, []),
+              ),
+            ),
+          )
+          as _i3.Future<String>);
 }
