@@ -3,8 +3,8 @@ lib/src/tools/launch.dart,52,0,0.00,9;10;11;12;16;17;18;22;23;26;27;28;31;32;33;
 lib/src/tools/system_info.dart,13,0,0.00,4;5;7;9;12;13;18;22;23;24;26;29;30
 lib/src/tools/validate_exception.dart,5,3,60.00,19;21
 lib/src/tools/launch_config.dart,21,17,80.95,61;64;90;91
-lib/src/tools/obtain.dart,69,56,81.16,21;22;23;37;53;54;64;82;83;88;116;117;156
 lib/src/tools/obtain_config.dart,10,9,90.00,36
+lib/src/tools/obtain.dart,69,64,92.75,21;22;23;64;156
 lib/src/tools/launch_config.g.dart,19,18,94.74,21
 lib/src/tools/executable_config.dart,7,7,100.00,
 lib/src/tools/executable_config.g.dart,4,4,100.00,
