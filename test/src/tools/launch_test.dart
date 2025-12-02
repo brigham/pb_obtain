@@ -59,16 +59,14 @@ sleep 5
       // Give it a moment to run
       await Future.delayed(Duration(milliseconds: 500));
 
-      // Verify process is running (exitCode is null if running)
-      // Actually we can't easily check if it's running without awaiting exitCode which blocks
-      // But we can check output if we pipe it?
-      // launch() pipes stdout/stderr to print/log. We might not capture it here easily.
-      // But we can check if directories were created in the system temp (since homeDirectory is null).
+      expect(process, isNotNull);
+      expect(process!.pid, greaterThan(0));
 
-      // Since launch() creates a random temp dir for data when homeDirectory is null,
-      // and logs it: "_log('Created temporary PocketBase directory at $pbDir');"
-      // We can't easily know the path unless we capture stderr.
-      // However, we can use homeDirectory in the test to control where it goes.
+      // Verify it's running
+      bool isDone = false;
+      process!.exitCode.then((_) => isDone = true);
+      await Future.delayed(Duration(milliseconds: 100));
+      expect(isDone, isFalse, reason: "Process should still be running");
     });
 
     test('launches process and sets up directories (specified data dir)', () async {
