@@ -210,5 +210,210 @@ void main() {
         ),
       );
     });
+
+    test('returns existing executable path without downloading', () async {
+      final config = ObtainConfig(
+        githubTag: 'v0.31.0',
+        downloadDir: tempDir.path,
+      );
+
+      when(mockOsInfo.osName).thenReturn('linux');
+      when(mockOsInfo.isWindows).thenReturn(false);
+
+      final executablePath = p.join(tempDir.path, 'v0.31.0', 'pocketbase');
+      File(executablePath).createSync(recursive: true);
+
+      final resultPath = await obtain(
+        config,
+        httpClient: mockClient,
+        osInfo: mockOsInfo,
+        architectureInfo: mockArchInfo,
+      );
+
+      expect(resultPath, executablePath);
+      verifyZeroInteractions(mockClient);
+    });
+
+    test('throws exception on HTTP error fetching release info', () async {
+      final config = ObtainConfig(
+        githubTag: 'v0.31.0',
+        downloadDir: tempDir.path,
+      );
+
+      when(mockOsInfo.osName).thenReturn('linux');
+      when(mockOsInfo.isWindows).thenReturn(false);
+      when(mockArchInfo.getCpuArchitecture()).thenAnswer((_) async => 'amd64');
+
+      final releaseUrl = Uri.parse(
+        'https://api.github.com/repos/pocketbase/pocketbase/releases/tags/v0.31.0',
+      );
+
+      when(
+        mockClient.get(releaseUrl),
+      ).thenAnswer((_) async => http.Response('Not Found', 404));
+
+      expect(
+        () => obtain(
+          config,
+          httpClient: mockClient,
+          osInfo: mockOsInfo,
+          architectureInfo: mockArchInfo,
+        ),
+        throwsA(
+          predicate(
+            (e) => e.toString().contains('Failed to fetch release info: 404'),
+          ),
+        ),
+      );
+    });
+
+    test('throws exception when binary asset is not found', () async {
+      final config = ObtainConfig(
+        githubTag: 'v0.31.0',
+        downloadDir: tempDir.path,
+      );
+
+      when(mockOsInfo.osName).thenReturn('linux');
+      when(mockOsInfo.isWindows).thenReturn(false);
+      when(mockArchInfo.getCpuArchitecture()).thenAnswer((_) async => 'amd64');
+
+      final releaseUrl = Uri.parse(
+        'https://api.github.com/repos/pocketbase/pocketbase/releases/tags/v0.31.0',
+      );
+
+      final releaseJson = {
+        'assets': [
+          {'name': 'other_file.txt', 'browser_download_url': '...'},
+        ],
+      };
+
+      when(
+        mockClient.get(releaseUrl),
+      ).thenAnswer((_) async => http.Response(jsonEncode(releaseJson), 200));
+
+      expect(
+        () => obtain(
+          config,
+          httpClient: mockClient,
+          osInfo: mockOsInfo,
+          architectureInfo: mockArchInfo,
+        ),
+        throwsA(
+          predicate((e) => e.toString().contains('Could not find asset')),
+        ),
+      );
+    });
+
+    test('logs warning and proceeds when checksums.txt is not found', () async {
+      final config = ObtainConfig(
+        githubTag: 'v0.31.0',
+        downloadDir: tempDir.path,
+      );
+
+      when(mockOsInfo.osName).thenReturn('linux');
+      when(mockOsInfo.isWindows).thenReturn(false);
+      when(mockArchInfo.getCpuArchitecture()).thenAnswer((_) async => 'amd64');
+
+      final targetName = 'pocketbase_0.31.0_linux_amd64.zip';
+      final binaryUrl = Uri.parse('https://example.com/$targetName');
+
+      final releaseUrl = Uri.parse(
+        'https://api.github.com/repos/pocketbase/pocketbase/releases/tags/v0.31.0',
+      );
+
+      final releaseJson = {
+        'assets': [
+          {'name': targetName, 'browser_download_url': binaryUrl.toString()},
+        ],
+      };
+
+      when(
+        mockClient.get(releaseUrl),
+      ).thenAnswer((_) async => http.Response(jsonEncode(releaseJson), 200));
+
+      // Mock zip
+      final archive = Archive();
+      archive.addFile(ArchiveFile('pocketbase', 0, []));
+      final zipBytes = ZipEncoder().encode(archive);
+
+      when(
+        mockClient.readBytes(binaryUrl),
+      ).thenAnswer((_) async => Uint8List.fromList(zipBytes));
+
+      await obtain(
+        config,
+        httpClient: mockClient,
+        osInfo: mockOsInfo,
+        architectureInfo: mockArchInfo,
+      );
+
+      // Verify download happened
+      verify(mockClient.readBytes(binaryUrl)).called(1);
+      // Verify NO checksum read
+      verifyNever(mockClient.read(any));
+    });
+
+    test(
+      'logs warning and proceeds when hash is not found in checksums.txt',
+      () async {
+        final config = ObtainConfig(
+          githubTag: 'v0.31.0',
+          downloadDir: tempDir.path,
+        );
+
+        when(mockOsInfo.osName).thenReturn('linux');
+        when(mockOsInfo.isWindows).thenReturn(false);
+        when(
+          mockArchInfo.getCpuArchitecture(),
+        ).thenAnswer((_) async => 'amd64');
+
+        final targetName = 'pocketbase_0.31.0_linux_amd64.zip';
+        final binaryUrl = Uri.parse('https://example.com/$targetName');
+        final checksumUrl = Uri.parse('https://example.com/checksums.txt');
+
+        final releaseUrl = Uri.parse(
+          'https://api.github.com/repos/pocketbase/pocketbase/releases/tags/v0.31.0',
+        );
+
+        final releaseJson = {
+          'assets': [
+            {'name': targetName, 'browser_download_url': binaryUrl.toString()},
+            {
+              'name': 'checksums.txt',
+              'browser_download_url': checksumUrl.toString(),
+            },
+          ],
+        };
+
+        when(
+          mockClient.get(releaseUrl),
+        ).thenAnswer((_) async => http.Response(jsonEncode(releaseJson), 200));
+
+        // Mock zip
+        final archive = Archive();
+        archive.addFile(ArchiveFile('pocketbase', 0, []));
+        final zipBytes = ZipEncoder().encode(archive);
+
+        when(
+          mockClient.readBytes(binaryUrl),
+        ).thenAnswer((_) async => Uint8List.fromList(zipBytes));
+
+        when(
+          mockClient.read(checksumUrl),
+        ).thenAnswer((_) async => 'sha256  other_file.zip');
+
+        await obtain(
+          config,
+          httpClient: mockClient,
+          osInfo: mockOsInfo,
+          architectureInfo: mockArchInfo,
+        );
+
+        // Verify download happened
+        verify(mockClient.readBytes(binaryUrl)).called(1);
+        // Verify checksum read
+        verify(mockClient.read(checksumUrl)).called(1);
+      },
+    );
   });
 }

@@ -4,3 +4,4 @@ linter:
   rules:
     unnecessary_breaks: true
     unawaited_futures: true
+    prefer_single_quotes: true

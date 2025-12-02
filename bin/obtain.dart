@@ -65,7 +65,7 @@ void main(List<String> args) async {
         downloadDir: releaseDir ?? config.downloadDir
     );
     String asYaml = jsonEncode(config.toJson());
-    stderr.writeln("To make this configuration reusable, copy/paste the following into a YAML file:");
+    stderr.writeln('To make this configuration reusable, copy/paste the following into a YAML file:');
     stderr.writeln(asYaml);
   }
 
@@ -77,5 +77,5 @@ void main(List<String> args) async {
   }
 
   var executablePath = await obtain(config);
-  print("Downloaded version ${config.githubTag} to $executablePath");
+  print('Downloaded version ${config.githubTag} to $executablePath');
 }
