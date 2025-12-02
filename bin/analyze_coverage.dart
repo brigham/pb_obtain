@@ -144,13 +144,6 @@ void main() async {
     }
   }
 
-  regressions.removeWhere(
-    (key, value) => {
-      // Testing this requires real HTTP calls, so we don't want to enforce
-      // coverage.
-      "lib/src/tools/obtain.dart",
-    }.contains(key),
-  );
 
   if (regressions.isEmpty) {
     exit(0);
