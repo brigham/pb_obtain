@@ -128,6 +128,7 @@ void main() async {
           "lib/pb/dto/dto.dart",
           "lib/pb/dto/dto_expand.dart",
           "lib/pb/dto/patch_dto.dart",
+          "lib/pb_obtain.dart",
         }.contains(filepath) ||
         !filepath.endsWith('.dart')) {
       continue;
