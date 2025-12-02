@@ -54,23 +54,23 @@ class LaunchConfig with _$LaunchConfig {
   final bool detached;
 
   void validate() {
-    if (templateDir == "") {
-      throw ValidateException("template", "template cannot be empty.");
+    if (templateDir == '') {
+      throw ValidateException('template', 'template cannot be empty.');
     }
     if (executable == null && obtain == null) {
-      throw ValidateException("executable/obtain", "one must be set");
+      throw ValidateException('executable/obtain', 'one must be set');
     }
     if (executable != null && obtain != null) {
-      throw ValidateException("executable", "cannot be set with obtain");
+      throw ValidateException('executable', 'cannot be set with obtain');
     }
-    ValidateException.usingPrefix("executable", () {
+    ValidateException.usingPrefix('executable', () {
       executable?.validate();
     });
-    ValidateException.usingPrefix("obtain", () {
+    ValidateException.usingPrefix('obtain', () {
       obtain?.validate();
     });
     if (port == 0) {
-      throw ValidateException("port", "must be set to non-zero.");
+      throw ValidateException('port', 'must be set to non-zero.');
     }
   }
 
@@ -88,7 +88,7 @@ class LaunchConfig with _$LaunchConfig {
 
   /// Creates an empty launch configuration with default values.
   const LaunchConfig.empty()
-    : this._(templateDir: "", port: 0, detached: false);
+    : this._(templateDir: '', port: 0, detached: false);
 
   /// Creates a launch configuration using an existing PocketBase executable.
   const LaunchConfig.executable({

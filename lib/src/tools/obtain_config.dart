@@ -21,11 +21,11 @@ class ObtainConfig with _$ObtainConfig {
   final String downloadDir;
 
   void validate() {
-    if (githubTag == "") {
-      throw ValidateException("githubTag", "cannot be empty.");
+    if (githubTag == '') {
+      throw ValidateException('githubTag', 'cannot be empty.');
     }
-    if (downloadDir == "") {
-      throw ValidateException("downloadPath", "cannot be empty.");
+    if (downloadDir == '') {
+      throw ValidateException('downloadPath', 'cannot be empty.');
     }
   }
 
@@ -33,7 +33,7 @@ class ObtainConfig with _$ObtainConfig {
   const ObtainConfig({required this.githubTag, required this.downloadDir});
 
   /// Creates an empty configuration with empty strings.
-  const ObtainConfig.empty() : this(githubTag: "", downloadDir: "");
+  const ObtainConfig.empty() : this(githubTag: '', downloadDir: '');
 
   /// Creates an [ObtainConfig] from a JSON map.
   factory ObtainConfig.fromJson(Map<String, dynamic> json) =>

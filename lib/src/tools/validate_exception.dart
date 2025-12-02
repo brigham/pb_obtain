@@ -1,5 +1,5 @@
 class ValidateException {
-  static String _prefix = "";
+  static String _prefix = '';
 
   static void usingPrefix(String prefix, void Function() validator) {
     String oldPrefix = _prefix;
@@ -14,10 +14,10 @@ class ValidateException {
   final String field;
   final String message;
 
-  ValidateException(String field, this.message) : field = "$_prefix$field";
+  ValidateException(String field, this.message) : field = '$_prefix$field';
 
   @override
   String toString() {
-    return "$field: $message";
+    return '$field: $message';
   }
 }

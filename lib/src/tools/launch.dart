@@ -33,7 +33,7 @@ Future<Process> launch(LaunchConfig config) async {
   } else if (config.executable != null) {
     executable = config.executable!.path;
   } else {
-    throw Exception("No way to find a PocketBase binary.");
+    throw Exception('No way to find a PocketBase binary.');
   }
 
   final dataDirectory = config.homeDirectory;

@@ -110,7 +110,7 @@ void main(List<String> args) async {
     );
     String asYaml = jsonEncode(config.toJson());
     stderr.writeln(
-      "To make this configuration reusable, copy/paste the following into a YAML file:",
+      'To make this configuration reusable, copy/paste the following into a YAML file:',
     );
     stderr.writeln(asYaml);
   }

@@ -17,8 +17,8 @@ class ExecutableConfig with _$ExecutableConfig {
   final String path;
 
   void validate() {
-    if (path == "") {
-      throw ValidateException("path", "cannot be empty.");
+    if (path == '') {
+      throw ValidateException('path', 'cannot be empty.');
     }
   }
 
