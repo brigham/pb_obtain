@@ -122,12 +122,8 @@ void main() async {
 
     final filepath = p.relative(file.path);
     if (filepath.endsWith('.freezed.dart') ||
-        filepath.startsWith('lib/gen/') ||
+        filepath.endsWith('.g.dart') ||
         {
-          "lib/pb/dto/dto_field.dart",
-          "lib/pb/dto/dto.dart",
-          "lib/pb/dto/dto_expand.dart",
-          "lib/pb/dto/patch_dto.dart",
           "lib/pb_obtain.dart",
         }.contains(filepath) ||
         !filepath.endsWith('.dart')) {
