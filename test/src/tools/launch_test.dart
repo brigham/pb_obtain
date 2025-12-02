@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:path/path.dart' as p;
@@ -64,9 +65,9 @@ sleep 5
 
       // Verify it's running
       bool isDone = false;
-      process!.exitCode.then((_) => isDone = true);
+      unawaited(process!.exitCode.then((_) => isDone = true));
       await Future.delayed(Duration(milliseconds: 100));
-      expect(isDone, isFalse, reason: "Process should still be running");
+      expect(isDone, isFalse, reason: 'Process should still be running');
     });
 
     test('launches process and sets up directories (specified data dir)', () async {
@@ -110,9 +111,9 @@ sleep 5
       // We can check if exitCode completes immediately (meaning it failed or finished)
       // Since our script sleeps for 5s, it should not be done yet.
       bool isDone = false;
-      process!.exitCode.then((_) => isDone = true);
+      unawaited(process!.exitCode.then((_) => isDone = true));
       await Future.delayed(Duration(milliseconds: 100));
-      expect(isDone, isFalse, reason: "Process should still be running");
+      expect(isDone, isFalse, reason: 'Process should still be running');
     });
   });
 }
