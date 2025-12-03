@@ -1,9 +1,13 @@
+import 'package:args/args.dart';
+import 'package:dcli/dcli.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:path/path.dart' as p;
 
+import 'arg_picker.dart';
 import 'validate_exception.dart';
 
-part 'obtain_config.g.dart';
 part 'obtain_config.freezed.dart';
+part 'obtain_config.g.dart';
 
 /// Configuration for downloading the PocketBase executable.
 ///
@@ -40,4 +44,36 @@ class ObtainConfig with _$ObtainConfig {
       _$ObtainConfigFromJson(json);
 
   Map<String, dynamic> toJson() => _$ObtainConfigToJson(this);
+
+  static void addOptions(ArgParser parser) {
+    parser
+      ..addOption('tag', help: 'PocketBase release to download.')
+      ..addOption(
+        'release-dir',
+        defaultsTo: p.join(env['HOME']!, 'develop', 'pocketbase'),
+        help: 'Where to download binary specified by --tag.',
+      );
+  }
+
+  static ({ObtainConfig? config, bool pickedAny}) merge(
+    ObtainConfig? config,
+    ArgResults results,
+  ) {
+    var picker = ArgPicker(config, results);
+
+    String? version = picker.pickString('tag');
+    String? releaseDir = picker.pickString('release-dir');
+
+    if (picker.pickedAny) {
+      config = config ?? ObtainConfig.empty();
+      config = config.copyWith(
+        githubTag: version ?? config.githubTag,
+        downloadDir: releaseDir ?? config.downloadDir,
+      );
+    } else if (config == null) {
+      return (config: null, pickedAny: picker.pickedAny);
+    }
+
+    return (config: config, pickedAny: picker.pickedAny);
+  }
 }

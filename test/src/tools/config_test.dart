@@ -1,6 +1,9 @@
 import 'dart:convert';
 
-import 'package:pb_obtain/pb_obtain.dart';
+import 'package:pb_obtain/src/tools/executable_config.dart';
+import 'package:pb_obtain/src/tools/launch_config.dart';
+import 'package:pb_obtain/src/tools/obtain_config.dart';
+import 'package:pb_obtain/src/tools/validate_exception.dart';
 import 'package:test/test.dart';
 
 void main() {

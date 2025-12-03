@@ -48,7 +48,7 @@ analyze_coverage() {
         %h = ();
         @z = ();
       }
-    ' coverage/lcov.info sample_coverage/lcov.info | sort -k4,4 -n -t, > COVERAGE.csv && \
+    ' coverage/lcov.info | sort -k4,4 -n -t, > COVERAGE.csv && \
     dart run bin/analyze_coverage.dart && \
     rm OLD_COVERAGE.csv
 }

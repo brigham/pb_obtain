@@ -124,7 +124,9 @@ void main() async {
     if (filepath.endsWith('.freezed.dart') ||
         filepath.endsWith('.g.dart') ||
         {
+          'lib/config.dart',
           'lib/pb_obtain.dart',
+          'lib/validate_exception.dart',
         }.contains(filepath) ||
         !filepath.endsWith('.dart')) {
       continue;

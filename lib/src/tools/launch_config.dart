@@ -1,8 +1,12 @@
+import 'package:args/args.dart';
+import 'package:dcli/dcli.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:path/path.dart' as p;
+
+import 'arg_picker.dart';
+import 'executable_config.dart';
 import 'obtain_config.dart';
 import 'validate_exception.dart';
-
-import 'executable_config.dart';
 
 part 'launch_config.freezed.dart';
 part 'launch_config.g.dart';
@@ -113,4 +117,88 @@ class LaunchConfig with _$LaunchConfig {
       _$LaunchConfigFromJson(json);
 
   Map<String, dynamic> toJson() => _$LaunchConfigToJson(this);
+
+  static void addOptions(ArgParser parser) {
+    parser
+      ..addSeparator(
+        '''
+Where to find the binary
+========================
+Use a local executable or download from GitHub.'''
+            .trim(),
+      )
+      ..addSeparator(
+        '''
+Local executable
+----------------'''
+            .trim(),
+      )
+      ..addOption(
+        'executable',
+        defaultsTo: p.join(env['HOME']!, 'develop', 'pocketbase', 'pocketbase'),
+        help: 'Path to PocketBase executable.',
+      )
+      ..addSeparator(
+        '''
+Download from GitHub
+--------------------'''
+            .trim(),
+      );
+    ObtainConfig.addOptions(parser);
+
+    parser
+      ..addSeparator(
+        '''
+Launch settings
+==============='''
+            .trim(),
+      )
+      ..addOption(
+        'template-dir',
+        defaultsTo: 'pocketbase',
+        help:
+            'PocketBase template directory. pb_migrations, pb_hooks, and pb_public are copied to --output.',
+      )
+      ..addOption(
+        'home-dir',
+        help:
+            'The PocketBase home directory, where pb_data will be created and template files are copied.',
+      )
+      ..addOption('port', defaultsTo: '8696', help: 'PocketBase port.');
+  }
+
+  static ({LaunchConfig? config, bool pickedAny}) merge(
+    LaunchConfig? config,
+    ArgResults results,
+  ) {
+    var picker = ArgPicker(config, results);
+
+    int? port = picker.pickArg('port', (parsed) {
+      final port = int.tryParse(parsed);
+      if (port == null) {
+        throw ValidateException('port', 'must be a number: $parsed');
+      }
+      return port;
+    });
+    String? templateDir = picker.pickString('template-dir');
+    String? executable = picker.pickString('executable');
+    String? homeDir = picker.pickString('home-dir');
+
+    if (picker.pickedAny) {
+      config ??= LaunchConfig.empty();
+      config = config.copyWith(
+        templateDir: templateDir ?? config.templateDir,
+        executable: executable != null
+            ? ExecutableConfig(path: executable)
+            : config.executable,
+        obtain: ObtainConfig.merge(config.obtain, results).config,
+        homeDirectory: homeDir ?? config.homeDirectory,
+        port: port ?? config.port,
+      );
+    } else if (config == null) {
+      return (config: null, pickedAny: picker.pickedAny);
+    }
+
+    return (config: config, pickedAny: picker.pickedAny);
+  }
 }

@@ -1,3 +1,8 @@
+# 0.6.0
+
+* Rename start.dart to launch.dart.
+* Reusable YAML and CLI argument parsing.
+
 # 0.5.0
 
 * `launch` returns `PocketBaseProcess` and waits for a valid health
