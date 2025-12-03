@@ -60,7 +60,7 @@ abstract class ConfigBuilder<C> {
     }
 
     C? config;
-    if (results['yaml'] != null) {
+    if ((results['yaml'] ?? '').isNotEmpty) {
       final yaml = File(results['yaml'] as String).readAsStringSync();
       try {
         config = checkedYamlDecode(

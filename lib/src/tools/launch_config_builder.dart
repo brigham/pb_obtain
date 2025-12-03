@@ -16,7 +16,7 @@ class LaunchConfigBuilder extends ConfigBuilder<LaunchConfig> {
   ({LaunchConfig? config, bool pickedAny}) merge(
     LaunchConfig? config,
     ArgResults results,
-  ) => LaunchConfig.merge(config, results);
+  ) => LaunchConfig.merge(config, results, required: true);
 
   @override
   Map<String, dynamic> toJson(LaunchConfig config) => config.toJson();

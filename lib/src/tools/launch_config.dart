@@ -185,8 +185,9 @@ Launch settings
 
   static ({LaunchConfig? config, bool pickedAny}) merge(
     LaunchConfig? config,
-    ArgResults results,
-  ) {
+    ArgResults results, {
+    bool required = true,
+  }) {
     var picker = ArgPicker(config, results);
 
     int? port = picker.pickArg('port', (parsed) {
@@ -203,7 +204,18 @@ Launch settings
     var (config: mergedObtain, pickedAny: obtainPickedAny) = ObtainConfig.merge(
       config?.obtain,
       results,
+      required: false,
     );
+    if (mergedObtain != null && !results.wasParsed('executable')) {
+      executable = null;
+    }
+
+    if (!required &&
+        config == null &&
+        homeDir == null &&
+        mergedObtain == null) {
+      return (config: null, pickedAny: picker.pickedAny);
+    }
 
     var pickedAny = picker.pickedAny || obtainPickedAny;
     if (pickedAny) {

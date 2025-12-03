@@ -57,12 +57,17 @@ class ObtainConfig with _$ObtainConfig {
 
   static ({ObtainConfig? config, bool pickedAny}) merge(
     ObtainConfig? config,
-    ArgResults results,
-  ) {
+    ArgResults results, {
+    bool required = true,
+  }) {
     var picker = ArgPicker(config, results);
 
     String? version = picker.pickString('tag');
     String? releaseDir = picker.pickString('release-dir');
+
+    if (!required && config == null && version == null) {
+      return (config: null, pickedAny: picker.pickedAny);
+    }
 
     if (picker.pickedAny) {
       config = config ?? ObtainConfig.empty();

@@ -16,7 +16,7 @@ class ObtainConfigBuilder extends ConfigBuilder<ObtainConfig> {
   ({ObtainConfig? config, bool pickedAny}) merge(
     ObtainConfig? config,
     ArgResults results,
-  ) => ObtainConfig.merge(config, results);
+  ) => ObtainConfig.merge(config, results, required: true);
 
   @override
   Map<String, dynamic> toJson(ObtainConfig config) {
