@@ -12,11 +12,17 @@ void main() {
     });
 
     test('validate fails with empty githubTag', () {
-      expect(() => ObtainConfig(githubTag: '', downloadDir: 'tmp'), throwsA(isA<ArgumentError>()));
+      expect(
+        () => ObtainConfig(githubTag: '', downloadDir: 'tmp'),
+        throwsA(isA<ArgumentError>()),
+      );
     });
 
     test('validate fails with empty downloadDir', () {
-      expect(() => ObtainConfig(githubTag: 'v0.0.0', downloadDir: ''), throwsA(isA<ArgumentError>()));
+      expect(
+        () => ObtainConfig(githubTag: 'v0.0.0', downloadDir: ''),
+        throwsA(isA<ArgumentError>()),
+      );
     });
 
     test('toJson/fromJson works', () {
@@ -80,21 +86,27 @@ void main() {
     });
 
     test('validate fails if templateDir empty', () {
-      expect(() => LaunchConfig.executable(
-        templateDir: '',
-        port: 8090,
-        detached: true,
-        executable: ExecutableConfig(path: 'exe'),
-      ), throwsA(isA<ArgumentError>()));
+      expect(
+        () => LaunchConfig.executable(
+          templateDir: '',
+          port: 8090,
+          detached: true,
+          executable: ExecutableConfig(path: 'exe'),
+        ),
+        throwsA(isA<ArgumentError>()),
+      );
     });
 
     test('validate fails if port is 0', () {
-      expect(() => LaunchConfig.executable(
-        templateDir: 'tpl',
-        port: 0,
-        detached: true,
-        executable: ExecutableConfig(path: 'exe'),
-      ), throwsA(isA<ArgumentError>()));
+      expect(
+        () => LaunchConfig.executable(
+          templateDir: 'tpl',
+          port: 0,
+          detached: true,
+          executable: ExecutableConfig(path: 'exe'),
+        ),
+        throwsA(isA<ArgumentError>()),
+      );
     });
 
     test('toJson/fromJson works', () {

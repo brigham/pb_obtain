@@ -11,8 +11,11 @@ class ArgPicker<C> {
 
   T? pickArg<T>(String name, T Function(String) converter) {
     if (base == null || results.wasParsed(name)) {
-      _pickedAny = true;
-      return converter(results[name] as String);
+      final value = results[name];
+      if (value != null) {
+        _pickedAny = true;
+        return converter(value as String);
+      }
     }
     return null;
   }
