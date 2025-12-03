@@ -1,3 +1,7 @@
+# 0.7.1
+
+* Fixed some bugs with mutually exclusive fields.
+
 # 0.7.0
 
 * Use `checked_yaml` for better error messages.
