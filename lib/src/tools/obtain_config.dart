@@ -66,8 +66,12 @@ class ObtainConfig with _$ObtainConfig {
 
     if (picker.pickedAny) {
       config = config ?? ObtainConfig.empty();
+      final newTag = version ?? config.githubTag;
+      if (newTag.isEmpty) {
+        return (config: null, pickedAny: picker.pickedAny);
+      }
       config = config.copyWith(
-        githubTag: version ?? config.githubTag,
+        githubTag: newTag,
         downloadDir: releaseDir ?? config.downloadDir,
       );
     } else if (config == null) {

@@ -4,10 +4,38 @@ import 'dart:io';
 import 'package:args/args.dart';
 import 'package:checked_yaml/checked_yaml.dart';
 
+class ConfigHelpException implements Exception {
+  final String message;
+  ConfigHelpException(this.message);
+
+  @override
+  String toString() => message;
+}
+
+class ConfigUserException implements Exception {
+  final String message;
+  ConfigUserException(this.message);
+
+  @override
+  String toString() => message;
+}
+
 abstract class ConfigBuilder<C> {
   final String? defaultYaml;
 
   ConfigBuilder(this.defaultYaml);
+
+  C buildConfigOrExit(List<String> args) {
+    try {
+      return buildConfig(args);
+    } on ConfigHelpException catch (e) {
+      print(e.message);
+      exit(0);
+    } on ConfigUserException catch (e) {
+      stderr.writeln(e.message);
+      exit(1);
+    }
+  }
 
   C buildConfig(List<String> args) {
     final parser = ArgParser(usageLineLength: 80)
@@ -20,10 +48,15 @@ abstract class ConfigBuilder<C> {
       ..addFlag('help', abbr: 'h', negatable: false, help: 'Show help.');
     addOptions(parser);
 
-    final results = parser.parse(args);
+    final ArgResults results;
+    try {
+      results = parser.parse(args);
+    } on ArgParserException catch (e) {
+      throw ConfigUserException('${e.message}\n\n${parser.usage}');
+    }
+
     if (results['help']) {
-      print(parser.usage);
-      exit(0);
+      throw ConfigHelpException(parser.usage);
     }
 
     C? config;
@@ -32,12 +65,11 @@ abstract class ConfigBuilder<C> {
       try {
         config = checkedYamlDecode(
           yaml,
-              (m) => configFromJson(m!),
+          (m) => configFromJson(m!),
           allowNull: false,
         );
       } on ParsedYamlException catch (e) {
-        stderr.writeln(e.formattedMessage);
-        exit(1);
+        throw ConfigUserException(e.formattedMessage ?? e.toString());
       }
     }
 
@@ -45,13 +77,10 @@ abstract class ConfigBuilder<C> {
     try {
       (:config, :pickedAny) = merge(config, results);
       if (config == null) {
-        print(parser.usage);
-        exit(0);
+        throw ConfigHelpException(parser.usage);
       }
     } on ArgumentError catch (e) {
-      stderr.writeln(e.toString());
-      stderr.writeln(parser.usage);
-      exit(1);
+      throw ConfigUserException('${e.toString()}\n\n${parser.usage}');
     }
 
     if (pickedAny) {

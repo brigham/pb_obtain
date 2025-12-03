@@ -15,7 +15,12 @@ part 'launch_config.g.dart';
 /// This class defines how PocketBase should be started, including where to find
 /// or download the executable, where to store data, and what port to listen on.
 @freezed
-@JsonSerializable(constructor: '_', anyMap: true, checked: true, disallowUnrecognizedKeys: true)
+@JsonSerializable(
+  constructor: '_',
+  anyMap: true,
+  checked: true,
+  disallowUnrecognizedKeys: true,
+)
 class LaunchConfig with _$LaunchConfig {
   /// The directory containing PocketBase template files.
   ///
@@ -61,10 +66,18 @@ class LaunchConfig with _$LaunchConfig {
       throw ArgumentError.value(templateDir, 'templateDir', 'cannot be empty');
     }
     if (executable == null && obtain == null) {
-      throw ArgumentError.value(executable, 'executable', 'executable or obtain must be set');
+      throw ArgumentError.value(
+        executable,
+        'executable',
+        'executable or obtain must be set',
+      );
     }
     if (executable != null && obtain != null) {
-      throw ArgumentError.value(executable, 'executable', 'cannot be set with obtain');
+      throw ArgumentError.value(
+        executable,
+        'executable',
+        'cannot be set with obtain',
+      );
     }
     if (port == 0) {
       throw ArgumentError.value(port, 'port', 'must be set to non-zero.');
@@ -87,7 +100,12 @@ class LaunchConfig with _$LaunchConfig {
 
   /// Creates an empty launch configuration with default values.
   LaunchConfig.empty()
-    : templateDir = '', port = 0, detached = false, executable = null, obtain = null, homeDirectory = null;
+    : templateDir = '',
+      port = 0,
+      detached = false,
+      executable = null,
+      obtain = null,
+      homeDirectory = null;
 
   /// Creates a launch configuration using an existing PocketBase executable.
   LaunchConfig.executable({
@@ -112,8 +130,7 @@ class LaunchConfig with _$LaunchConfig {
   }
 
   /// Creates a [LaunchConfig] from a JSON map.
-  factory LaunchConfig.fromJson(Map json) =>
-      _$LaunchConfigFromJson(json);
+  factory LaunchConfig.fromJson(Map json) => _$LaunchConfigFromJson(json);
 
   Map<String, dynamic> toJson() => _$LaunchConfigToJson(this);
 
@@ -183,7 +200,10 @@ Launch settings
     String? executable = picker.pickString('executable');
     String? homeDir = picker.pickString('home-dir');
 
-    var (config: mergedObtain, pickedAny: obtainPickedAny) = ObtainConfig.merge(config?.obtain, results);
+    var (config: mergedObtain, pickedAny: obtainPickedAny) = ObtainConfig.merge(
+      config?.obtain,
+      results,
+    );
 
     var pickedAny = picker.pickedAny || obtainPickedAny;
     if (pickedAny) {
