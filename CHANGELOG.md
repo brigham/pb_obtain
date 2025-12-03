@@ -1,5 +1,7 @@
-# 0.4.1
+# 0.5.0
 
+* `launch` returns `PocketBaseProcess` and waits for a valid health
+  check before returning.
 * `launch` will obtain if needed, as implied by the config interface.
 * Clean up dependencies.
 

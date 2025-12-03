@@ -1,18 +1,30 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:http/http.dart' as http;
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
 import 'package:path/path.dart' as p;
 import 'package:pb_obtain/pb_obtain.dart';
 import 'package:test/test.dart';
+
+@GenerateNiceMocks([MockSpec<http.Client>()])
+import 'launch_test.mocks.dart';
 
 void main() {
   group('launch', () {
     late Directory tempDir;
     late Directory templateDir;
     late String dummyExecutablePath;
-    Process? process;
+    late MockClient mockClient;
+    PocketBaseProcess? process;
 
     setUp(() {
+      mockClient = MockClient();
+      when(
+        mockClient.get(any),
+      ).thenAnswer((_) async => http.Response('OK', 200));
+
       tempDir = Directory.systemTemp.createTempSync('launch_test_');
       templateDir = Directory(p.join(tempDir.path, 'templates'))..createSync();
 
@@ -41,7 +53,7 @@ sleep 5
     });
 
     tearDown(() {
-      process?.kill();
+      process?.process.kill();
       if (tempDir.existsSync()) {
         tempDir.deleteSync(recursive: true);
       }
@@ -55,19 +67,21 @@ sleep 5
         executable: ExecutableConfig(path: dummyExecutablePath),
       );
 
-      process = await launch(config);
+      process = await launch(config, client: mockClient);
 
       // Give it a moment to run
       await Future.delayed(Duration(milliseconds: 500));
 
       expect(process, isNotNull);
-      expect(process!.pid, greaterThan(0));
+      expect(process!.process.pid, greaterThan(0));
 
       // Verify it's running
-      bool isDone = false;
-      unawaited(process!.exitCode.then((_) => isDone = true));
       await Future.delayed(Duration(milliseconds: 100));
-      expect(isDone, isFalse, reason: 'Process should still be running');
+      expect(
+        process!.isRunning,
+        isTrue,
+        reason: 'Process should still be running',
+      );
     });
 
     test('launches process and sets up directories (specified data dir)', () async {
@@ -81,7 +95,7 @@ sleep 5
         homeDirectory: dataDir.path,
       );
 
-      process = await launch(config);
+      process = await launch(config, client: mockClient);
 
       // Give the process a moment to start
       await Future.delayed(Duration(milliseconds: 100));
@@ -110,10 +124,12 @@ sleep 5
       // Verify process is running (should rely on the fact that launch returned)
       // We can check if exitCode completes immediately (meaning it failed or finished)
       // Since our script sleeps for 5s, it should not be done yet.
-      bool isDone = false;
-      unawaited(process!.exitCode.then((_) => isDone = true));
       await Future.delayed(Duration(milliseconds: 100));
-      expect(isDone, isFalse, reason: 'Process should still be running');
+      expect(
+        process!.isRunning,
+        isTrue,
+        reason: 'Process should still be running',
+      );
     });
   });
 }

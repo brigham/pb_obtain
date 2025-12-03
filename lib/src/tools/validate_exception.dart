@@ -1,4 +1,4 @@
-class ValidateException {
+class ValidateException implements Exception {
   static String _prefix = '';
 
   static void usingPrefix(String prefix, void Function() validator) {

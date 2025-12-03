@@ -1,10 +1,13 @@
 import 'dart:io';
 
 import 'package:dcli/dcli.dart';
+import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as p;
+import 'package:pb_obtain/src/tools/launch_exception.dart';
 
 import 'launch_config.dart';
 import 'obtain.dart';
+import 'pocket_base_process.dart';
 
 void copyDirectoryContents(String sourceDir, String destDir) {
   if (!exists(sourceDir)) return;
@@ -23,8 +26,19 @@ void _log(String message) {
   stderr.writeln(message);
 }
 
-Future<Process> launch(LaunchConfig config) async {
+Future<PocketBaseProcess> launch(
+  LaunchConfig config, {
+  http.Client? client,
+}) async {
   final port = config.port;
+
+  try {
+    await http.get(Uri.parse('http://127.0.0.1:$port/api/health'));
+    throw LaunchException('PocketBase is already running on port $port.');
+  } on http.ClientException {
+    // Good, we don't want a running server yet.
+  }
+
   final templateDir = config.templateDir;
 
   final String executable;
@@ -86,17 +100,28 @@ Future<Process> launch(LaunchConfig config) async {
   );
 
   ProcessStartMode mode = config.detached ? .detachedWithStdio : .normal;
+  var httpHost = '127.0.0.1:$port';
   final process = await Process.start(p.join(pbDir, 'pocketbase'), [
     'serve',
     '--dir=${p.join(pbDir, 'pb_data')}',
     '--hooksDir=${p.join(pbDir, 'pb_hooks')}',
     '--publicDir=${p.join(pbDir, 'pb_public')}',
     '--migrationsDir=${p.join(pbDir, 'pb_migrations')}',
-    '--http=127.0.0.1:$port',
+    '--http=$httpHost',
   ], mode: mode);
 
   process.stdout.transform(SystemEncoding().decoder).listen(print);
   process.stderr.transform(SystemEncoding().decoder).listen(_log);
 
-  return process;
+  var pbProcess = PocketBaseProcess(process, httpHost);
+  if (!await pbProcess.waitFor(.running, client: client)) {
+    if (!await pbProcess.stop()) {
+      pbProcess.process.kill(.sigkill);
+      if (mode == .normal) {
+        await pbProcess.process.exitCode;
+      }
+    }
+    throw LaunchException('PocketBase failed to start in time.');
+  }
+  return pbProcess;
 }

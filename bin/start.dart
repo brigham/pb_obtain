@@ -124,5 +124,7 @@ void main(List<String> args) async {
 
   var process = await launch(config);
 
-  await process.exitCode;
+  if (!config.detached) {
+    await process.process.exitCode;
+  }
 }
