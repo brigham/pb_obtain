@@ -106,7 +106,7 @@ packages:
     source: hosted
     version: "1.4.1"
   checked_yaml:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: checked_yaml
       sha256: "959525d3162f249993882720d52b7e0c833978df229be20702b33d48d91de70f"

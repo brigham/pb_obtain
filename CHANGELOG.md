@@ -1,3 +1,7 @@
+# 0.7.0
+
+* Use `checked_yaml` for better error messages.
+
 # 0.6.0
 
 * Rename start.dart to launch.dart.

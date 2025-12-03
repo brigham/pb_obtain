@@ -6,7 +6,6 @@ import 'package:path/path.dart' as p;
 import 'arg_picker.dart';
 import 'executable_config.dart';
 import 'obtain_config.dart';
-import 'validate_exception.dart';
 
 part 'launch_config.freezed.dart';
 part 'launch_config.g.dart';
@@ -16,7 +15,7 @@ part 'launch_config.g.dart';
 /// This class defines how PocketBase should be started, including where to find
 /// or download the executable, where to store data, and what port to listen on.
 @freezed
-@JsonSerializable(constructor: '_')
+@JsonSerializable(constructor: '_', anyMap: true, checked: true, disallowUnrecognizedKeys: true)
 class LaunchConfig with _$LaunchConfig {
   /// The directory containing PocketBase template files.
   ///
@@ -57,63 +56,63 @@ class LaunchConfig with _$LaunchConfig {
   @override
   final bool detached;
 
-  void validate() {
+  void _validate() {
     if (templateDir == '') {
-      throw ValidateException('template', 'template cannot be empty.');
+      throw ArgumentError.value(templateDir, 'templateDir', 'cannot be empty');
     }
     if (executable == null && obtain == null) {
-      throw ValidateException('executable/obtain', 'one must be set');
+      throw ArgumentError.value(executable, 'executable', 'executable or obtain must be set');
     }
     if (executable != null && obtain != null) {
-      throw ValidateException('executable', 'cannot be set with obtain');
+      throw ArgumentError.value(executable, 'executable', 'cannot be set with obtain');
     }
-    ValidateException.usingPrefix('executable', () {
-      executable?.validate();
-    });
-    ValidateException.usingPrefix('obtain', () {
-      obtain?.validate();
-    });
     if (port == 0) {
-      throw ValidateException('port', 'must be set to non-zero.');
+      throw ArgumentError.value(port, 'port', 'must be set to non-zero.');
     }
   }
 
   /// Creates a raw launch configuration.
   ///
   /// Usually, [LaunchConfig.executable] or [LaunchConfig.obtain] should be used instead.
-  const LaunchConfig._({
+  LaunchConfig._({
     required this.templateDir,
     required this.port,
     required this.detached,
     this.executable,
     this.obtain,
     this.homeDirectory,
-  });
+  }) {
+    _validate();
+  }
 
   /// Creates an empty launch configuration with default values.
-  const LaunchConfig.empty()
-    : this._(templateDir: '', port: 0, detached: false);
+  LaunchConfig.empty()
+    : templateDir = '', port = 0, detached = false, executable = null, obtain = null, homeDirectory = null;
 
   /// Creates a launch configuration using an existing PocketBase executable.
-  const LaunchConfig.executable({
+  LaunchConfig.executable({
     required this.templateDir,
     required this.port,
     required this.detached,
     required ExecutableConfig this.executable,
     this.homeDirectory,
-  }) : obtain = null;
+  }) : obtain = null {
+    _validate();
+  }
 
   /// Creates a launch configuration that downloads PocketBase.
-  const LaunchConfig.obtain({
+  LaunchConfig.obtain({
     required this.templateDir,
     required this.port,
     required this.detached,
     required ObtainConfig this.obtain,
     this.homeDirectory,
-  }) : executable = null;
+  }) : executable = null {
+    _validate();
+  }
 
   /// Creates a [LaunchConfig] from a JSON map.
-  factory LaunchConfig.fromJson(Map<String, dynamic> json) =>
+  factory LaunchConfig.fromJson(Map json) =>
       _$LaunchConfigFromJson(json);
 
   Map<String, dynamic> toJson() => _$LaunchConfigToJson(this);
@@ -176,7 +175,7 @@ Launch settings
     int? port = picker.pickArg('port', (parsed) {
       final port = int.tryParse(parsed);
       if (port == null) {
-        throw ValidateException('port', 'must be a number: $parsed');
+        throw ArgumentError.value(parsed, 'port', 'must be a number');
       }
       return port;
     });
@@ -184,21 +183,22 @@ Launch settings
     String? executable = picker.pickString('executable');
     String? homeDir = picker.pickString('home-dir');
 
-    if (picker.pickedAny) {
+    var (config: mergedObtain, pickedAny: obtainPickedAny) = ObtainConfig.merge(config?.obtain, results);
+
+    var pickedAny = picker.pickedAny || obtainPickedAny;
+    if (pickedAny) {
       config ??= LaunchConfig.empty();
       config = config.copyWith(
         templateDir: templateDir ?? config.templateDir,
         executable: executable != null
             ? ExecutableConfig(path: executable)
             : config.executable,
-        obtain: ObtainConfig.merge(config.obtain, results).config,
+        obtain: mergedObtain,
         homeDirectory: homeDir ?? config.homeDirectory,
         port: port ?? config.port,
       );
-    } else if (config == null) {
-      return (config: null, pickedAny: picker.pickedAny);
     }
 
-    return (config: config, pickedAny: picker.pickedAny);
+    return (config: config, pickedAny: pickedAny);
   }
 }

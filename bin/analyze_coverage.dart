@@ -126,7 +126,6 @@ void main() async {
         {
           'lib/config.dart',
           'lib/pb_obtain.dart',
-          'lib/validate_exception.dart',
         }.contains(filepath) ||
         !filepath.endsWith('.dart')) {
       continue;

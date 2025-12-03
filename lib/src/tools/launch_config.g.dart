@@ -6,21 +6,35 @@ part of 'launch_config.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-LaunchConfig _$LaunchConfigFromJson(Map<String, dynamic> json) =>
-    LaunchConfig._(
-      templateDir: json['templateDir'] as String,
-      port: (json['port'] as num).toInt(),
-      detached: json['detached'] as bool,
-      executable: json['executable'] == null
-          ? null
-          : ExecutableConfig.fromJson(
-              json['executable'] as Map<String, dynamic>,
-            ),
-      obtain: json['obtain'] == null
-          ? null
-          : ObtainConfig.fromJson(json['obtain'] as Map<String, dynamic>),
-      homeDirectory: json['homeDirectory'] as String?,
-    );
+LaunchConfig _$LaunchConfigFromJson(Map json) =>
+    $checkedCreate('LaunchConfig', json, ($checkedConvert) {
+      $checkKeys(
+        json,
+        allowedKeys: const [
+          'templateDir',
+          'executable',
+          'obtain',
+          'homeDirectory',
+          'port',
+          'detached',
+        ],
+      );
+      final val = LaunchConfig._(
+        templateDir: $checkedConvert('templateDir', (v) => v as String),
+        port: $checkedConvert('port', (v) => (v as num).toInt()),
+        detached: $checkedConvert('detached', (v) => v as bool),
+        executable: $checkedConvert(
+          'executable',
+          (v) => v == null ? null : ExecutableConfig.fromJson(v as Map),
+        ),
+        obtain: $checkedConvert(
+          'obtain',
+          (v) => v == null ? null : ObtainConfig.fromJson(v as Map),
+        ),
+        homeDirectory: $checkedConvert('homeDirectory', (v) => v as String?),
+      );
+      return val;
+    });
 
 Map<String, dynamic> _$LaunchConfigToJson(LaunchConfig instance) =>
     <String, dynamic>{

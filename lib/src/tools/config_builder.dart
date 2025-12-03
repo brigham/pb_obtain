@@ -2,9 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:args/args.dart';
-import 'package:yaml/yaml.dart';
-
-import 'validate_exception.dart';
+import 'package:checked_yaml/checked_yaml.dart';
 
 abstract class ConfigBuilder<C> {
   final String? defaultYaml;
@@ -30,29 +28,35 @@ abstract class ConfigBuilder<C> {
 
     C? config;
     if (results['yaml'] != null) {
-      final yaml =
-          loadYaml(File(results['yaml'] as String).readAsStringSync())
-              as YamlMap;
-      config = configFromJson(yaml.cast());
+      final yaml = File(results['yaml'] as String).readAsStringSync();
+      try {
+        config = checkedYamlDecode(
+          yaml,
+              (m) => configFromJson(m!),
+          allowNull: false,
+        );
+      } on ParsedYamlException catch (e) {
+        stderr.writeln(e.formattedMessage);
+        exit(1);
+      }
     }
 
     final bool pickedAny;
-    (:config, :pickedAny) = merge(config, results);
-    if (config == null) {
-      print(parser.usage);
-      exit(0);
-    }
-
     try {
-      validate(config);
-    } on ValidateException catch (e) {
-      print(e);
-      print(parser.usage);
+      (:config, :pickedAny) = merge(config, results);
+      if (config == null) {
+        print(parser.usage);
+        exit(0);
+      }
+    } on ArgumentError catch (e) {
+      stderr.writeln(e.toString());
+      stderr.writeln(parser.usage);
       exit(1);
     }
 
     if (pickedAny) {
-      String asYaml = jsonEncode(toJson(config));
+      JsonEncoder encoder = JsonEncoder.withIndent('  ');
+      String asYaml = encoder.convert(toJson(config));
       stderr.writeln(
         'To make this configuration reusable, copy/paste the following into a YAML file:',
       );
@@ -64,11 +68,9 @@ abstract class ConfigBuilder<C> {
 
   void addOptions(ArgParser parser);
 
-  C configFromJson(Map<String, dynamic> json);
+  C configFromJson(Map json);
 
   ({C? config, bool pickedAny}) merge(C? config, ArgResults results);
-
-  void validate(C config);
 
   Map<String, dynamic> toJson(C config);
 }

@@ -4,7 +4,6 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:path/path.dart' as p;
 
 import 'arg_picker.dart';
-import 'validate_exception.dart';
 
 part 'obtain_config.freezed.dart';
 part 'obtain_config.g.dart';
@@ -14,7 +13,7 @@ part 'obtain_config.g.dart';
 /// This class specifies the version of PocketBase to download and the directory
 /// where the downloaded executable should be stored.
 @freezed
-@JsonSerializable()
+@JsonSerializable(anyMap: true, checked: true, disallowUnrecognizedKeys: true)
 class ObtainConfig with _$ObtainConfig {
   /// The GitHub release tag of the PocketBase version to download (e.g., "v0.16.10").
   @override
@@ -24,24 +23,25 @@ class ObtainConfig with _$ObtainConfig {
   @override
   final String downloadDir;
 
-  void validate() {
+  void _validate() {
     if (githubTag == '') {
-      throw ValidateException('githubTag', 'cannot be empty.');
+      throw ArgumentError.value(githubTag, 'githubTag', 'cannot be empty.');
     }
     if (downloadDir == '') {
-      throw ValidateException('downloadPath', 'cannot be empty.');
+      throw ArgumentError.value(downloadDir, 'downloadDir', 'cannot be empty.');
     }
   }
 
   /// Creates a configuration for obtaining PocketBase.
-  const ObtainConfig({required this.githubTag, required this.downloadDir});
+  ObtainConfig({required this.githubTag, required this.downloadDir}) {
+    _validate();
+  }
 
   /// Creates an empty configuration with empty strings.
-  const ObtainConfig.empty() : this(githubTag: '', downloadDir: '');
+  const ObtainConfig.empty() : githubTag = '', downloadDir = '';
 
   /// Creates an [ObtainConfig] from a JSON map.
-  factory ObtainConfig.fromJson(Map<String, dynamic> json) =>
-      _$ObtainConfigFromJson(json);
+  factory ObtainConfig.fromJson(Map json) => _$ObtainConfigFromJson(json);
 
   Map<String, dynamic> toJson() => _$ObtainConfigToJson(this);
 

@@ -5,14 +5,13 @@ import 'package:pb_obtain/pb_obtain.dart';
 import 'package:pb_obtain/src/tools/config_builder.dart';
 
 class _ObtainConfigBuilder extends ConfigBuilder<ObtainConfig> {
-  _ObtainConfigBuilder(): super(null);
+  _ObtainConfigBuilder() : super(null);
 
   @override
   void addOptions(ArgParser parser) => ObtainConfig.addOptions(parser);
 
   @override
-  ObtainConfig configFromJson(Map<String, dynamic> json) =>
-      ObtainConfig.fromJson(json);
+  ObtainConfig configFromJson(Map json) => ObtainConfig.fromJson(json);
 
   @override
   ({ObtainConfig? config, bool pickedAny}) merge(
@@ -23,11 +22,6 @@ class _ObtainConfigBuilder extends ConfigBuilder<ObtainConfig> {
   @override
   Map<String, dynamic> toJson(ObtainConfig config) {
     return config.toJson();
-  }
-
-  @override
-  void validate(ObtainConfig config) {
-    config.validate();
   }
 }
 

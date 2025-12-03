@@ -12,7 +12,7 @@ class _LaunchConfigBuilder extends ConfigBuilder<LaunchConfig> {
   void addOptions(ArgParser parser) => LaunchConfig.addOptions(parser);
 
   @override
-  LaunchConfig configFromJson(Map<String, dynamic> json) =>
+  LaunchConfig configFromJson(Map json) =>
       LaunchConfig.fromJson(json);
 
   @override
@@ -23,9 +23,6 @@ class _LaunchConfigBuilder extends ConfigBuilder<LaunchConfig> {
 
   @override
   Map<String, dynamic> toJson(LaunchConfig config) => config.toJson();
-
-  @override
-  void validate(LaunchConfig config) => config.validate();
 }
 
 void main(List<String> args) async {
