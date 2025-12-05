@@ -61,6 +61,20 @@ class LaunchConfig with _$LaunchConfig {
   @override
   final bool detached;
 
+  /// Where to redirect stdout.
+  ///
+  /// Can be `/dev/stdout`, `/dev/stderr`, `/dev/null`, or a file path.
+  /// If a file path ends with `:a`, output will be appended.
+  @override
+  final String? stdout;
+
+  /// Where to redirect stderr.
+  ///
+  /// Can be `/dev/stdout`, `/dev/stderr`, `/dev/null`, or a file path.
+  /// If a file path ends with `:a`, output will be appended.
+  @override
+  final String? stderr;
+
   void _validate() {
     if (templateDir == '') {
       throw ArgumentError.value(templateDir, 'templateDir', 'cannot be empty');
@@ -94,6 +108,8 @@ class LaunchConfig with _$LaunchConfig {
     this.executable,
     this.obtain,
     this.homeDirectory,
+    this.stdout,
+    this.stderr,
   }) {
     _validate();
   }
@@ -105,7 +121,9 @@ class LaunchConfig with _$LaunchConfig {
       detached = false,
       executable = null,
       obtain = null,
-      homeDirectory = null;
+      homeDirectory = null,
+      stdout = null,
+      stderr = null;
 
   /// Creates a launch configuration using an existing PocketBase executable.
   LaunchConfig.executable({
@@ -114,6 +132,8 @@ class LaunchConfig with _$LaunchConfig {
     required this.detached,
     required ExecutableConfig this.executable,
     this.homeDirectory,
+    this.stdout,
+    this.stderr,
   }) : obtain = null {
     _validate();
   }
@@ -125,6 +145,8 @@ class LaunchConfig with _$LaunchConfig {
     required this.detached,
     required ObtainConfig this.obtain,
     this.homeDirectory,
+    this.stdout,
+    this.stderr,
   }) : executable = null {
     _validate();
   }
@@ -180,7 +202,17 @@ Launch settings
         help:
             'The PocketBase home directory, where pb_data will be created and template files are copied.',
       )
-      ..addOption('port', defaultsTo: '8696', help: 'PocketBase port.');
+      ..addOption('port', defaultsTo: '8696', help: 'PocketBase port.')
+      ..addOption(
+        'stdout',
+        help:
+            'Where to redirect stdout. Options: /dev/stdout, /dev/stderr, /dev/null, or a file path. Append with :a to append to file.',
+      )
+      ..addOption(
+        'stderr',
+        help:
+            'Where to redirect stderr. Options: /dev/stdout, /dev/stderr, /dev/null, or a file path. Append with :a to append to file.',
+      );
   }
 
   static ({LaunchConfig? config, bool pickedAny}) merge(
@@ -200,6 +232,8 @@ Launch settings
     String? templateDir = picker.pickString('template-dir');
     String? executable = picker.pickString('executable');
     String? homeDir = picker.pickString('home-dir');
+    String? stdout = picker.pickString('stdout');
+    String? stderr = picker.pickString('stderr');
 
     var (config: mergedObtain, pickedAny: obtainPickedAny) = ObtainConfig.merge(
       config?.obtain,
@@ -213,7 +247,9 @@ Launch settings
     if (!required &&
         config == null &&
         homeDir == null &&
-        mergedObtain == null) {
+        mergedObtain == null &&
+        stdout == null &&
+        stderr == null) {
       return (config: null, pickedAny: picker.pickedAny);
     }
 
@@ -228,6 +264,8 @@ Launch settings
         obtain: mergedObtain,
         homeDirectory: homeDir ?? config.homeDirectory,
         port: port ?? config.port,
+        stdout: stdout ?? config.stdout,
+        stderr: stderr ?? config.stderr,
       );
     }
 

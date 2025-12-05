@@ -45,6 +45,7 @@ void main() {
 #!/bin/sh
 echo "Dummy PocketBase started"
 echo "Args: \$@"
+echo "Error Output" >&2
 # Keep running for a bit to allow detection
 sleep 5
 ''';
@@ -130,6 +131,58 @@ sleep 5
         isTrue,
         reason: 'Process should still be running',
       );
+    });
+
+    test('redirects stdout and stderr to files', () async {
+      final stdoutFile = File(p.join(tempDir.path, 'stdout.txt'));
+      final stderrFile = File(p.join(tempDir.path, 'stderr.txt'));
+
+      final config = LaunchConfig.executable(
+        templateDir: templateDir.path,
+        port: 8091,
+        detached: false,
+        executable: ExecutableConfig(path: dummyExecutablePath),
+        stdout: stdoutFile.path,
+        stderr: stderrFile.path,
+      );
+
+      process = await launch(config, client: mockClient);
+
+      // Give it a moment to run and flush
+      await Future.delayed(Duration(seconds: 1));
+
+      expect(stdoutFile.existsSync(), isTrue);
+      expect(stderrFile.existsSync(), isTrue);
+
+      final stdoutContent = stdoutFile.readAsStringSync();
+      final stderrContent = stderrFile.readAsStringSync();
+
+      expect(stdoutContent, contains('Dummy PocketBase started'));
+      expect(stderrContent, contains('Error Output'));
+    });
+
+    test('appends to stdout file', () async {
+      final stdoutFile = File(p.join(tempDir.path, 'stdout_append.txt'));
+      stdoutFile.writeAsStringSync('Initial content\n');
+
+      final config = LaunchConfig.executable(
+        templateDir: templateDir.path,
+        port: 8092,
+        detached: false,
+        executable: ExecutableConfig(path: dummyExecutablePath),
+        stdout: '${stdoutFile.path}:a',
+      );
+
+      process = await launch(config, client: mockClient);
+
+      // Give it a moment to run and flush
+      await Future.delayed(Duration(seconds: 1));
+
+      expect(stdoutFile.existsSync(), isTrue);
+      final stdoutContent = stdoutFile.readAsStringSync();
+
+      expect(stdoutContent, startsWith('Initial content\n'));
+      expect(stdoutContent, contains('Dummy PocketBase started'));
     });
   });
 }

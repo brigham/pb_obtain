@@ -17,6 +17,8 @@ LaunchConfig _$LaunchConfigFromJson(Map json) =>
           'homeDirectory',
           'port',
           'detached',
+          'stdout',
+          'stderr',
         ],
       );
       final val = LaunchConfig._(
@@ -32,6 +34,8 @@ LaunchConfig _$LaunchConfigFromJson(Map json) =>
           (v) => v == null ? null : ObtainConfig.fromJson(v as Map),
         ),
         homeDirectory: $checkedConvert('homeDirectory', (v) => v as String?),
+        stdout: $checkedConvert('stdout', (v) => v as String?),
+        stderr: $checkedConvert('stderr', (v) => v as String?),
       );
       return val;
     });
@@ -44,4 +48,6 @@ Map<String, dynamic> _$LaunchConfigToJson(LaunchConfig instance) =>
       'homeDirectory': instance.homeDirectory,
       'port': instance.port,
       'detached': instance.detached,
+      'stdout': instance.stdout,
+      'stderr': instance.stderr,
     };

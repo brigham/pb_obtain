@@ -26,6 +26,42 @@ void _log(String message) {
   stderr.writeln(message);
 }
 
+void _redirect(
+  Stream<List<int>> stream,
+  String? target, {
+  required bool defaultToStdout,
+}) {
+  if (target == '/dev/null') {
+    stream.drain();
+    return;
+  }
+
+  bool toStdout = defaultToStdout;
+  if (target == '/dev/stdout') {
+    toStdout = true;
+  } else if (target == '/dev/stderr') {
+    toStdout = false;
+  } else if (target != null) {
+    // File
+    var mode = FileMode.write;
+    var path = target;
+    if (target.endsWith(':a')) {
+      mode = FileMode.append;
+      path = target.substring(0, target.length - 2);
+    }
+    final sink = File(path).openWrite(mode: mode);
+    sink.addStream(stream).whenComplete(() => sink.close());
+    return;
+  }
+
+  // Console
+  if (toStdout) {
+    stream.transform(SystemEncoding().decoder).listen(print);
+  } else {
+    stream.transform(SystemEncoding().decoder).listen(_log);
+  }
+}
+
 Future<PocketBaseProcess> launch(
   LaunchConfig config, {
   http.Client? client,
@@ -110,8 +146,8 @@ Future<PocketBaseProcess> launch(
     '--http=$httpHost',
   ], mode: mode);
 
-  process.stdout.transform(SystemEncoding().decoder).listen(print);
-  process.stderr.transform(SystemEncoding().decoder).listen(_log);
+  _redirect(process.stdout, config.stdout, defaultToStdout: true);
+  _redirect(process.stderr, config.stderr, defaultToStdout: false);
 
   var pbProcess = PocketBaseProcess(process, httpHost);
   if (!await pbProcess.waitFor(.running, client: client)) {

@@ -106,5 +106,33 @@ port: "not-a-number"
         throwsA(isA<ConfigUserException>()),
       );
     });
+
+    test('buildConfig parses stdout and stderr from CLI', () {
+      final config = builder.buildConfig([
+        '--stdout',
+        '/dev/null',
+        '--stderr',
+        'error.log',
+      ]);
+      expect(config.stdout, '/dev/null');
+      expect(config.stderr, 'error.log');
+    });
+
+    test('buildConfig parses stdout and stderr from YAML', () {
+      final yamlPath = p.join(tempDir.path, 'config_out.yaml');
+      File(yamlPath).writeAsStringSync('''
+templateDir: "tpl"
+port: 8080
+detached: false
+executable:
+  path: "/bin/pb"
+stdout: "out.log"
+stderr: "err.log"
+''');
+
+      final config = builder.buildConfig(['--yaml', yamlPath]);
+      expect(config.stdout, 'out.log');
+      expect(config.stderr, 'err.log');
+    });
   });
 }

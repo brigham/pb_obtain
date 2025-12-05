@@ -122,5 +122,23 @@ void main() {
       expect(config2.templateDir, config.templateDir);
       expect(config2.port, config.port);
     });
+
+    test('toJson/fromJson works with stdout/stderr', () {
+      var config = LaunchConfig.executable(
+        templateDir: 'tpl',
+        port: 8090,
+        detached: true,
+        executable: ExecutableConfig(path: 'exe'),
+        stdout: '/dev/null',
+        stderr: 'error.log',
+      );
+      final json = config.toJson();
+      final decoded = jsonDecode(jsonEncode(json));
+      final config2 = LaunchConfig.fromJson(decoded);
+      expect(config2.templateDir, config.templateDir);
+      expect(config2.port, config.port);
+      expect(config2.stdout, config.stdout);
+      expect(config2.stderr, config.stderr);
+    });
   });
 }
