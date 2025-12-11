@@ -1,3 +1,8 @@
+# 0.7.2
+
+* Add stdout and stderr redirection.
+* Fix bug with relative executable paths.
+
 # 0.7.1
 
 * Fixed some bugs with mutually exclusive fields.
