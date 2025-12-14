@@ -111,7 +111,7 @@ Future<PocketBaseProcess> launch(
   if (exists(pocketbaseLink)) {
     delete(pocketbaseLink);
   }
-  createSymLink(targetPath: executable, linkPath: pocketbaseLink);
+  createSymLink(targetPath: p.absolute(executable), linkPath: pocketbaseLink);
 
   copyDirectoryContents(
     p.join(templateDir, 'pb_migrations'),

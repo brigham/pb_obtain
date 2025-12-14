@@ -184,5 +184,32 @@ sleep 5
       expect(stdoutContent, startsWith('Initial content\n'));
       expect(stdoutContent, contains('Dummy PocketBase started'));
     });
+
+    test('succeeds when executable path is relative', () async {
+      // Calculate relative path from current working directory
+      final relativeExecutablePath = p.relative(
+        dummyExecutablePath,
+        from: Directory.current.path,
+      );
+
+      final config = LaunchConfig.executable(
+        templateDir: templateDir.path,
+        port: 8099,
+        detached: false,
+        executable: ExecutableConfig(path: relativeExecutablePath),
+      );
+
+      process = await launch(config, client: mockClient);
+
+      // Give it a moment to run
+      await Future.delayed(Duration(milliseconds: 500));
+
+      expect(process, isNotNull);
+      expect(process!.process.pid, greaterThan(0));
+
+      // Verify it's running
+      await Future.delayed(Duration(milliseconds: 100));
+      expect(process!.isRunning, isTrue, reason: 'Process should be running');
+    });
   });
 }
