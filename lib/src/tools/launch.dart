@@ -144,6 +144,7 @@ Future<PocketBaseProcess> launch(
     '--publicDir=${p.join(pbDir, 'pb_public')}',
     '--migrationsDir=${p.join(pbDir, 'pb_migrations')}',
     '--http=$httpHost',
+    if (config.devMode) '--dev',
   ], mode: mode);
 
   _redirect(process.stdout, config.stdout, defaultToStdout: true);

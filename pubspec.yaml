@@ -1,6 +1,6 @@
 name: pb_obtain
 description: "Download and run PocketBase releases by version."
-version: 0.7.3
+version: 0.7.4
 repository: "https://github.com/brigham/pb_obtain"
 
 environment:

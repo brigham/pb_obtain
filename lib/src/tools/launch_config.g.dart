@@ -19,6 +19,7 @@ LaunchConfig _$LaunchConfigFromJson(Map json) =>
           'detached',
           'stdout',
           'stderr',
+          'devMode',
         ],
       );
       final val = LaunchConfig._(
@@ -36,6 +37,7 @@ LaunchConfig _$LaunchConfigFromJson(Map json) =>
         homeDirectory: $checkedConvert('homeDirectory', (v) => v as String?),
         stdout: $checkedConvert('stdout', (v) => v as String?),
         stderr: $checkedConvert('stderr', (v) => v as String?),
+        devMode: $checkedConvert('devMode', (v) => v as bool? ?? false),
       );
       return val;
     });
@@ -50,4 +52,5 @@ Map<String, dynamic> _$LaunchConfigToJson(LaunchConfig instance) =>
       'detached': instance.detached,
       'stdout': instance.stdout,
       'stderr': instance.stderr,
+      'devMode': instance.devMode,
     };

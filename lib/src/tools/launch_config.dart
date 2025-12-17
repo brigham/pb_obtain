@@ -75,6 +75,10 @@ class LaunchConfig with _$LaunchConfig {
   @override
   final String? stderr;
 
+  /// Whether to enable dev mode (print logs and sql statements)
+  @override
+  final bool devMode;
+
   void _validate() {
     if (templateDir == '') {
       throw ArgumentError.value(templateDir, 'templateDir', 'cannot be empty');
@@ -110,6 +114,7 @@ class LaunchConfig with _$LaunchConfig {
     this.homeDirectory,
     this.stdout,
     this.stderr,
+    this.devMode = false,
   }) {
     _validate();
   }
@@ -123,7 +128,8 @@ class LaunchConfig with _$LaunchConfig {
       obtain = null,
       homeDirectory = null,
       stdout = null,
-      stderr = null;
+      stderr = null,
+      devMode = false;
 
   /// Creates a launch configuration using an existing PocketBase executable.
   LaunchConfig.executable({
@@ -134,6 +140,7 @@ class LaunchConfig with _$LaunchConfig {
     this.homeDirectory,
     this.stdout,
     this.stderr,
+    this.devMode = false,
   }) : obtain = null {
     _validate();
   }
@@ -147,6 +154,7 @@ class LaunchConfig with _$LaunchConfig {
     this.homeDirectory,
     this.stdout,
     this.stderr,
+    this.devMode = false,
   }) : executable = null {
     _validate();
   }
@@ -212,7 +220,8 @@ Launch settings
         'stderr',
         help:
             'Where to redirect stderr. Options: /dev/stdout, /dev/stderr, /dev/null, or a file path. Append with :a to append to file.',
-      );
+      )
+      ..addFlag('dev', help: 'Enable dev mode.');
   }
 
   static ({LaunchConfig? config, bool pickedAny}) merge(
@@ -234,6 +243,7 @@ Launch settings
     String? homeDir = picker.pickString('home-dir');
     String? stdout = picker.pickString('stdout');
     String? stderr = picker.pickString('stderr');
+    bool? devMode = picker.pickFlag('dev');
 
     var (config: mergedObtain, pickedAny: obtainPickedAny) = ObtainConfig.merge(
       config?.obtain,
@@ -249,7 +259,8 @@ Launch settings
         homeDir == null &&
         mergedObtain == null &&
         stdout == null &&
-        stderr == null) {
+        stderr == null &&
+        devMode == null) {
       return (config: null, pickedAny: picker.pickedAny);
     }
 
@@ -266,6 +277,7 @@ Launch settings
         port: port ?? config.port,
         stdout: stdout ?? config.stdout,
         stderr: stderr ?? config.stderr,
+        devMode: devMode ?? config.devMode,
       );
     }
 

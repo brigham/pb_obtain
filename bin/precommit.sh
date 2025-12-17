@@ -23,8 +23,8 @@ run_command "dart run build_runner build" "precommit_build_runner.log" "Build Ru
 format_and_fix_files() {(
     set -e
 
-    dart format lib test
     dart fix --apply
+    dart format lib test
 )}
 run_command "format_and_fix_files" "precommit_format.log" "Formatting and fixing files"
 

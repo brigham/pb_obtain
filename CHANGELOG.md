@@ -1,3 +1,7 @@
+# 0.7.4
+
+* Can now enable --dev flag when launching.
+
 # 0.7.3
 
 * Fix bug with relative executable paths.

@@ -28,10 +28,6 @@ void main() {
       );
     });
 
-    // This test expects failure because no config is provided and defaults might clash or be insufficient?
-    // Actually, ConfigBuilder throws ConfigHelpException if config is null.
-    // But LaunchConfig.merge should return a config if defaults work.
-    // If ArgPicker crashes, we'll see.
     test('buildConfig with defaults', () {
       final config = builder.buildConfig([]);
       // If it succeeds, it should have defaults.
@@ -133,6 +129,41 @@ stderr: "err.log"
       final config = builder.buildConfig(['--yaml', yamlPath]);
       expect(config.stdout, 'out.log');
       expect(config.stderr, 'err.log');
+    });
+
+    test('buildConfig parses --dev from CLI', () {
+      final config = builder.buildConfig(['--dev']);
+      expect(config.devMode, true);
+    });
+
+    test('buildConfig parses devMode from YAML', () {
+      final yamlPath = p.join(tempDir.path, 'config_out.yaml');
+      File(yamlPath).writeAsStringSync('''
+templateDir: "tpl"
+port: 8080
+detached: false
+executable:
+  path: "/bin/pb"
+devMode: true
+''');
+
+      final config = builder.buildConfig(['--yaml', yamlPath]);
+      expect(config.devMode, true);
+    });
+
+    test('buildConfig parses --no-dev from CLI', () {
+      final yamlPath = p.join(tempDir.path, 'config_out.yaml');
+      File(yamlPath).writeAsStringSync('''
+templateDir: "tpl"
+port: 8080
+detached: false
+executable:
+  path: "/bin/pb"
+devMode: true
+''');
+
+      final config = builder.buildConfig(['--yaml', yamlPath, '--no-dev']);
+      expect(config.devMode, false);
     });
   });
 }

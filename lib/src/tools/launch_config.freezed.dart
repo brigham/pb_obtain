@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$LaunchConfig {
 
- String get templateDir; ExecutableConfig? get executable; ObtainConfig? get obtain; String? get homeDirectory; int get port; bool get detached; String? get stdout; String? get stderr;
+ String get templateDir; ExecutableConfig? get executable; ObtainConfig? get obtain; String? get homeDirectory; int get port; bool get detached; String? get stdout; String? get stderr; bool get devMode;
 /// Create a copy of LaunchConfig
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -26,16 +26,16 @@ $LaunchConfigCopyWith<LaunchConfig> get copyWith => _$LaunchConfigCopyWithImpl<L
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is LaunchConfig&&(identical(other.templateDir, templateDir) || other.templateDir == templateDir)&&(identical(other.executable, executable) || other.executable == executable)&&(identical(other.obtain, obtain) || other.obtain == obtain)&&(identical(other.homeDirectory, homeDirectory) || other.homeDirectory == homeDirectory)&&(identical(other.port, port) || other.port == port)&&(identical(other.detached, detached) || other.detached == detached)&&(identical(other.stdout, stdout) || other.stdout == stdout)&&(identical(other.stderr, stderr) || other.stderr == stderr));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is LaunchConfig&&(identical(other.templateDir, templateDir) || other.templateDir == templateDir)&&(identical(other.executable, executable) || other.executable == executable)&&(identical(other.obtain, obtain) || other.obtain == obtain)&&(identical(other.homeDirectory, homeDirectory) || other.homeDirectory == homeDirectory)&&(identical(other.port, port) || other.port == port)&&(identical(other.detached, detached) || other.detached == detached)&&(identical(other.stdout, stdout) || other.stdout == stdout)&&(identical(other.stderr, stderr) || other.stderr == stderr)&&(identical(other.devMode, devMode) || other.devMode == devMode));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,templateDir,executable,obtain,homeDirectory,port,detached,stdout,stderr);
+int get hashCode => Object.hash(runtimeType,templateDir,executable,obtain,homeDirectory,port,detached,stdout,stderr,devMode);
 
 @override
 String toString() {
-  return 'LaunchConfig(templateDir: $templateDir, executable: $executable, obtain: $obtain, homeDirectory: $homeDirectory, port: $port, detached: $detached, stdout: $stdout, stderr: $stderr)';
+  return 'LaunchConfig(templateDir: $templateDir, executable: $executable, obtain: $obtain, homeDirectory: $homeDirectory, port: $port, detached: $detached, stdout: $stdout, stderr: $stderr, devMode: $devMode)';
 }
 
 
@@ -46,7 +46,7 @@ abstract mixin class $LaunchConfigCopyWith<$Res>  {
   factory $LaunchConfigCopyWith(LaunchConfig value, $Res Function(LaunchConfig) _then) = _$LaunchConfigCopyWithImpl;
 @useResult
 $Res call({
- String templateDir, int port, bool detached, ExecutableConfig? executable, ObtainConfig? obtain, String? homeDirectory, String? stdout, String? stderr
+ String templateDir, int port, bool detached, ExecutableConfig? executable, ObtainConfig? obtain, String? homeDirectory, String? stdout, String? stderr, bool devMode
 });
 
 
@@ -63,7 +63,7 @@ class _$LaunchConfigCopyWithImpl<$Res>
 
 /// Create a copy of LaunchConfig
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? templateDir = null,Object? port = null,Object? detached = null,Object? executable = freezed,Object? obtain = freezed,Object? homeDirectory = freezed,Object? stdout = freezed,Object? stderr = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? templateDir = null,Object? port = null,Object? detached = null,Object? executable = freezed,Object? obtain = freezed,Object? homeDirectory = freezed,Object? stdout = freezed,Object? stderr = freezed,Object? devMode = null,}) {
   return _then(LaunchConfig._(
 templateDir: null == templateDir ? _self.templateDir : templateDir // ignore: cast_nullable_to_non_nullable
 as String,port: null == port ? _self.port : port // ignore: cast_nullable_to_non_nullable
@@ -73,7 +73,8 @@ as ExecutableConfig?,obtain: freezed == obtain ? _self.obtain : obtain // ignore
 as ObtainConfig?,homeDirectory: freezed == homeDirectory ? _self.homeDirectory : homeDirectory // ignore: cast_nullable_to_non_nullable
 as String?,stdout: freezed == stdout ? _self.stdout : stdout // ignore: cast_nullable_to_non_nullable
 as String?,stderr: freezed == stderr ? _self.stderr : stderr // ignore: cast_nullable_to_non_nullable
-as String?,
+as String?,devMode: null == devMode ? _self.devMode : devMode // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 

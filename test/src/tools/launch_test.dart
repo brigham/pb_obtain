@@ -211,5 +211,7 @@ sleep 5
       await Future.delayed(Duration(milliseconds: 100));
       expect(process!.isRunning, isTrue, reason: 'Process should be running');
     });
+
+    test('devMode', () {});
   });
 }
