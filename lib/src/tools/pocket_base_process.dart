@@ -90,7 +90,7 @@ class PocketBaseProcess {
       } on TimeoutException {
         return false;
       }
-      await Future.delayed(period);
+      await Future<void>.delayed(period);
       timeLeft = checkUntil.difference(DateTime.now());
     }
     return false;

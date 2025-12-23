@@ -56,7 +56,8 @@ Future<String> obtain(
     }
 
     final releaseJson = jsonDecode(response.body);
-    final assets = releaseJson['assets'] as List;
+    final assets = (releaseJson['assets'] as List<dynamic>)
+        .cast<Map<String, dynamic>>();
 
     // 3. Find Assets
     final versionStr = config.githubTag.startsWith('v')
@@ -92,7 +93,7 @@ Future<String> obtain(
     final zipPath = p.join(downloadDir.path, targetName);
     _log('Downloading $targetName to $zipPath...');
     final zipBytes = await client.readBytes(
-      Uri.parse(binaryAsset['browser_download_url']),
+      Uri.parse(binaryAsset['browser_download_url'] as String),
     );
     File(zipPath).writeAsBytesSync(zipBytes);
 
@@ -100,7 +101,7 @@ Future<String> obtain(
     if (checksumAsset != null) {
       _log('Verifying checksum...');
       final checksumsContent = await client.read(
-        Uri.parse(checksumAsset['browser_download_url']),
+        Uri.parse(checksumAsset['browser_download_url'] as String),
       );
       // checksums.txt format: "sha256_hash  filename"
       final lines = checksumsContent.split('\n');

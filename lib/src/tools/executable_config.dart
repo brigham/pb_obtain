@@ -26,7 +26,7 @@ class ExecutableConfig with _$ExecutableConfig {
   }
 
   /// Creates an [ExecutableConfig] from a JSON map.
-  factory ExecutableConfig.fromJson(Map json) =>
+  factory ExecutableConfig.fromJson(Map<dynamic, dynamic> json) =>
       _$ExecutableConfigFromJson(json);
 
   Map<String, dynamic> toJson() => _$ExecutableConfigToJson(this);

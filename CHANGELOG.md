@@ -1,3 +1,7 @@
+# 0.7.5
+
+* Add missing generics.
+
 # 0.7.4
 
 * Can now enable --dev flag when launching.

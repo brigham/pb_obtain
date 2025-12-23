@@ -10,7 +10,8 @@ class ObtainConfigBuilder extends ConfigBuilder<ObtainConfig> {
   void addOptions(ArgParser parser) => ObtainConfig.addOptions(parser);
 
   @override
-  ObtainConfig configFromJson(Map json) => ObtainConfig.fromJson(json);
+  ObtainConfig configFromJson(Map<dynamic, dynamic> json) =>
+      ObtainConfig.fromJson(json);
 
   @override
   ({ObtainConfig? config, bool pickedAny}) merge(

@@ -41,7 +41,8 @@ class ObtainConfig with _$ObtainConfig {
   const ObtainConfig.empty() : githubTag = '', downloadDir = '';
 
   /// Creates an [ObtainConfig] from a JSON map.
-  factory ObtainConfig.fromJson(Map json) => _$ObtainConfigFromJson(json);
+  factory ObtainConfig.fromJson(Map<dynamic, dynamic> json) =>
+      _$ObtainConfigFromJson(json);
 
   Map<String, dynamic> toJson() => _$ObtainConfigToJson(this);
 

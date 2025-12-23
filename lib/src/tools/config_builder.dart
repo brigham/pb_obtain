@@ -55,12 +55,12 @@ abstract class ConfigBuilder<C> {
       throw ConfigUserException('${e.message}\n\n${parser.usage}');
     }
 
-    if (results['help']) {
+    if (results.flag('help')) {
       throw ConfigHelpException(parser.usage);
     }
 
     C? config;
-    if ((results['yaml'] ?? '').isNotEmpty) {
+    if ((results.option('yaml') ?? '').isNotEmpty) {
       final yaml = File(results['yaml'] as String).readAsStringSync();
       try {
         config = checkedYamlDecode(
@@ -97,7 +97,7 @@ abstract class ConfigBuilder<C> {
 
   void addOptions(ArgParser parser);
 
-  C configFromJson(Map json);
+  C configFromJson(Map<dynamic, dynamic> json);
 
   ({C? config, bool pickedAny}) merge(C? config, ArgResults results);
 

@@ -160,7 +160,8 @@ class LaunchConfig with _$LaunchConfig {
   }
 
   /// Creates a [LaunchConfig] from a JSON map.
-  factory LaunchConfig.fromJson(Map json) => _$LaunchConfigFromJson(json);
+  factory LaunchConfig.fromJson(Map<dynamic, dynamic> json) =>
+      _$LaunchConfigFromJson(json);
 
   Map<String, dynamic> toJson() => _$LaunchConfigToJson(this);
 

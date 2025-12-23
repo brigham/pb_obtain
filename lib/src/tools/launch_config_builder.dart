@@ -10,7 +10,8 @@ class LaunchConfigBuilder extends ConfigBuilder<LaunchConfig> {
   void addOptions(ArgParser parser) => LaunchConfig.addOptions(parser);
 
   @override
-  LaunchConfig configFromJson(Map json) => LaunchConfig.fromJson(json);
+  LaunchConfig configFromJson(Map<dynamic, dynamic> json) =>
+      LaunchConfig.fromJson(json);
 
   @override
   ({LaunchConfig? config, bool pickedAny}) merge(

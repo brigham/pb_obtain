@@ -32,7 +32,7 @@ void _redirect(
   required bool defaultToStdout,
 }) {
   if (target == '/dev/null') {
-    stream.drain();
+    stream.drain<void>();
     return;
   }
 

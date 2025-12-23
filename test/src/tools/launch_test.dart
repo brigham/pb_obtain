@@ -71,13 +71,13 @@ sleep 5
       process = await launch(config, client: mockClient);
 
       // Give it a moment to run
-      await Future.delayed(Duration(milliseconds: 500));
+      await Future<void>.delayed(Duration(milliseconds: 500));
 
       expect(process, isNotNull);
       expect(process!.process.pid, greaterThan(0));
 
       // Verify it's running
-      await Future.delayed(Duration(milliseconds: 100));
+      await Future<void>.delayed(Duration(milliseconds: 100));
       expect(
         process!.isRunning,
         isTrue,
@@ -99,7 +99,7 @@ sleep 5
       process = await launch(config, client: mockClient);
 
       // Give the process a moment to start
-      await Future.delayed(Duration(milliseconds: 100));
+      await Future<void>.delayed(Duration(milliseconds: 100));
 
       // Verify directories
       expect(dataDir.existsSync(), isTrue);
@@ -125,7 +125,7 @@ sleep 5
       // Verify process is running (should rely on the fact that launch returned)
       // We can check if exitCode completes immediately (meaning it failed or finished)
       // Since our script sleeps for 5s, it should not be done yet.
-      await Future.delayed(Duration(milliseconds: 100));
+      await Future<void>.delayed(Duration(milliseconds: 100));
       expect(
         process!.isRunning,
         isTrue,
@@ -149,7 +149,7 @@ sleep 5
       process = await launch(config, client: mockClient);
 
       // Give it a moment to run and flush
-      await Future.delayed(Duration(seconds: 1));
+      await Future<void>.delayed(Duration(seconds: 1));
 
       expect(stdoutFile.existsSync(), isTrue);
       expect(stderrFile.existsSync(), isTrue);
@@ -176,7 +176,7 @@ sleep 5
       process = await launch(config, client: mockClient);
 
       // Give it a moment to run and flush
-      await Future.delayed(Duration(seconds: 1));
+      await Future<void>.delayed(Duration(seconds: 1));
 
       expect(stdoutFile.existsSync(), isTrue);
       final stdoutContent = stdoutFile.readAsStringSync();
@@ -202,13 +202,13 @@ sleep 5
       process = await launch(config, client: mockClient);
 
       // Give it a moment to run
-      await Future.delayed(Duration(milliseconds: 500));
+      await Future<void>.delayed(Duration(milliseconds: 500));
 
       expect(process, isNotNull);
       expect(process!.process.pid, greaterThan(0));
 
       // Verify it's running
-      await Future.delayed(Duration(milliseconds: 100));
+      await Future<void>.delayed(Duration(milliseconds: 100));
       expect(process!.isRunning, isTrue, reason: 'Process should be running');
     });
 

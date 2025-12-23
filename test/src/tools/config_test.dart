@@ -117,7 +117,7 @@ void main() {
         executable: ExecutableConfig(path: 'exe'),
       );
       final json = config.toJson();
-      final decoded = jsonDecode(jsonEncode(json));
+      final decoded = jsonDecode(jsonEncode(json)) as Map<dynamic, dynamic>;
       final config2 = LaunchConfig.fromJson(decoded);
       expect(config2.templateDir, config.templateDir);
       expect(config2.port, config.port);
@@ -133,7 +133,7 @@ void main() {
         stderr: 'error.log',
       );
       final json = config.toJson();
-      final decoded = jsonDecode(jsonEncode(json));
+      final decoded = jsonDecode(jsonEncode(json)) as Map<dynamic, dynamic>;
       final config2 = LaunchConfig.fromJson(decoded);
       expect(config2.templateDir, config.templateDir);
       expect(config2.port, config.port);
