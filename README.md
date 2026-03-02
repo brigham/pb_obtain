@@ -36,3 +36,70 @@ $ dart pub add dev:pb_obtain
 
 Run `dart run pb_obtain:start_pocketbase`. You should run this command
 when you update your migrations or when you upgrade this package.
+
+## Programmatic Usage
+
+You can use `pb_obtain` directly in your Dart code, which is especially useful
+for integration tests.
+
+### Downloading PocketBase
+
+Use `obtain` to download and extract a specific PocketBase version.
+
+```dart
+import 'package:pb_obtain/pb_obtain.dart';
+
+void main() async {
+  final config = ObtainConfig(
+    githubTag: 'v0.31.0',
+    downloadDir: './pb_releases',
+  );
+
+  final executablePath = await obtain(config);
+  print('PocketBase is at: $executablePath');
+}
+```
+
+### Launching PocketBase for Tests
+
+The `launch` function sets up a temporary directory with your migrations and
+starts a PocketBase process. It waits for the server to be healthy before
+returning.
+
+```dart
+import 'package:pb_obtain/pb_obtain.dart';
+import 'package:test/test.dart';
+
+void main() {
+  group('Integration Tests', () {
+    PocketBaseProcess? pb;
+
+    setUp(() async {
+      final config = LaunchConfig.obtain(
+        templateDir: './pocketbase_template', // migrations, hooks, public
+        port: 8090,
+        obtain: ObtainConfig(
+          githubTag: 'v0.31.0',
+          downloadDir: './pb_releases',
+        ),
+      );
+
+      pb = await launch(config);
+    });
+
+    tearDown(() async {
+      await pb?.stop();
+    });
+
+    test('PocketBase is running', () async {
+      expect(pb?.isRunning, isTrue);
+      // Your test logic here...
+    });
+  });
+}
+```
+
+The `PocketBaseProcess` object provides:
+- `process`: The underlying `dart:io` `Process`.
+- `isRunning`: Whether the process is still running.
+- `stop()`: Shuts down the process gracefully and waits for it to exit.

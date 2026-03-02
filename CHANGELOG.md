@@ -1,3 +1,7 @@
+# 0.7.6
+
+* Add programmatic usage section to README.md.
+
 # 0.7.5
 
 * Add missing generics.
