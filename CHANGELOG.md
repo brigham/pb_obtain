@@ -1,3 +1,7 @@
+# 0.7.7
+
+* Require newer version of json_serializable.
+
 # 0.7.6
 
 * Add programmatic usage section to README.md.
