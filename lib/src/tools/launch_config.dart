@@ -50,7 +50,8 @@ class LaunchConfig with _$LaunchConfig {
 
   /// The port number the PocketBase server should listen on.
   ///
-  /// This must be a non-zero integer.
+  /// This must be a non-negative integer. If set to `0`, a free port will be
+  /// automatically identified and used.
   @override
   final int port;
 
@@ -97,8 +98,8 @@ class LaunchConfig with _$LaunchConfig {
         'cannot be set with obtain',
       );
     }
-    if (port == 0) {
-      throw ArgumentError.value(port, 'port', 'must be set to non-zero.');
+    if (port < 0) {
+      throw ArgumentError.value(port, 'port', 'must be non-negative.');
     }
   }
 
@@ -211,7 +212,11 @@ Launch settings
         help:
             'The PocketBase home directory, where pb_data will be created and template files are copied.',
       )
-      ..addOption('port', defaultsTo: '8696', help: 'PocketBase port.')
+      ..addOption(
+        'port',
+        defaultsTo: '8696',
+        help: 'PocketBase port. If set to 0, a free port is chosen.',
+      )
       ..addOption(
         'stdout',
         help:

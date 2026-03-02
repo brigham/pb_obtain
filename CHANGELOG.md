@@ -1,3 +1,11 @@
+# 0.7.8
+
+* Add support for automatic free port identification by setting `port: 0` in
+  `LaunchConfig`.
+* Expose `httpHost` in `PocketBaseProcess` to programmatically discover the
+  assigned port.
+* Update `json_serializable` dependency and move it to `dev_dependencies`.
+
 # 0.7.7
 
 * Require newer version of json_serializable.

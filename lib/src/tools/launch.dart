@@ -62,17 +62,29 @@ void _redirect(
   }
 }
 
+Future<int> _findFreePort() async {
+  final server = await ServerSocket.bind(InternetAddress.loopbackIPv4, 0);
+  final port = server.port;
+  await server.close();
+  return port;
+}
+
 Future<PocketBaseProcess> launch(
   LaunchConfig config, {
   http.Client? client,
 }) async {
-  final port = config.port;
+  var port = config.port;
 
-  try {
-    await http.get(Uri.parse('http://127.0.0.1:$port/api/health'));
-    throw LaunchException('PocketBase is already running on port $port.');
-  } on http.ClientException {
-    // Good, we don't want a running server yet.
+  if (port == 0) {
+    port = await _findFreePort();
+    _log('Starting PocketBase on port $port');
+  } else {
+    try {
+      await http.get(Uri.parse('http://127.0.0.1:$port/api/health'));
+      throw LaunchException('PocketBase is already running on port $port.');
+    } on http.ClientException {
+      // Good, we don't want a running server yet.
+    }
   }
 
   final templateDir = config.templateDir;

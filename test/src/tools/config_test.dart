@@ -97,11 +97,20 @@ void main() {
       );
     });
 
-    test('validate fails if port is 0', () {
+    test('validate succeeds if port is 0', () {
+      var _ = LaunchConfig.executable(
+        templateDir: 'tpl',
+        port: 0,
+        detached: true,
+        executable: ExecutableConfig(path: 'exe'),
+      );
+    });
+
+    test('validate fails if port is negative', () {
       expect(
         () => LaunchConfig.executable(
           templateDir: 'tpl',
-          port: 0,
+          port: -1,
           detached: true,
           executable: ExecutableConfig(path: 'exe'),
         ),

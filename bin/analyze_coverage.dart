@@ -123,10 +123,7 @@ void main() async {
     final filepath = p.relative(file.path);
     if (filepath.endsWith('.freezed.dart') ||
         filepath.endsWith('.g.dart') ||
-        {
-          'lib/config.dart',
-          'lib/pb_obtain.dart',
-        }.contains(filepath) ||
+        {'lib/config.dart', 'lib/pb_obtain.dart'}.contains(filepath) ||
         !filepath.endsWith('.dart')) {
       continue;
     }
@@ -141,7 +138,6 @@ void main() async {
       );
     }
   }
-
 
   if (regressions.isEmpty) {
     exit(0);

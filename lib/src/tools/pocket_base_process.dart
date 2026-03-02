@@ -40,6 +40,9 @@ class PocketBaseProcess {
   /// The monitored [Process].
   Process get process => _process;
 
+  /// The final host and port on which the process is reachable.
+  String get httpHost => _httpHost;
+
   /// Returns `true` if the process is believed to be running.
   bool get isRunning => _exitCode == null;
 

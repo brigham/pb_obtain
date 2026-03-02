@@ -212,6 +212,30 @@ sleep 5
       expect(process!.isRunning, isTrue, reason: 'Process should be running');
     });
 
+    test('launches process with automatic port selection (port: 0)', () async {
+      final config = LaunchConfig.executable(
+        templateDir: templateDir.path,
+        port: 0,
+        detached: false,
+        executable: ExecutableConfig(path: dummyExecutablePath),
+      );
+
+      process = await launch(config, client: mockClient);
+
+      expect(process, isNotNull);
+      expect(process!.process.pid, greaterThan(0));
+      expect(process!.httpHost, isNot(contains(':0')));
+
+      final portString = process!.httpHost.split(':').last;
+      final port = int.tryParse(portString);
+      expect(port, isNotNull);
+      expect(port, greaterThan(0));
+
+      // Verify it's running
+      await Future<void>.delayed(Duration(milliseconds: 100));
+      expect(process!.isRunning, isTrue, reason: 'Process should be running');
+    });
+
     test('devMode', () {});
   });
 }

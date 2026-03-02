@@ -80,6 +80,25 @@ executable:
       expect(config.templateDir, 'tpl');
     });
 
+    test('buildConfig parses --port 0 from CLI', () {
+      final config = builder.buildConfig(['--port', '0']);
+      expect(config.port, 0);
+    });
+
+    test('buildConfig parses port: 0 from YAML', () {
+      final yamlPath = p.join(tempDir.path, 'config_port_0.yaml');
+      File(yamlPath).writeAsStringSync('''
+templateDir: "tpl"
+port: 0
+detached: false
+executable:
+  path: "/bin/pb"
+''');
+
+      final config = builder.buildConfig(['--yaml', yamlPath]);
+      expect(config.port, 0);
+    });
+
     test('buildConfig throws ConfigUserException on invalid YAML content', () {
       final yamlPath = p.join(tempDir.path, 'bad_config.yaml');
       File(yamlPath).writeAsStringSync('''
