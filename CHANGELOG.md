@@ -1,3 +1,8 @@
+# 0.7.9
+
+* Use advisory file locking in `obtain()` to prevent cross-process races during
+  binary download and extraction.
+
 # 0.7.8
 
 * Add support for automatic free port identification by setting `port: 0` in

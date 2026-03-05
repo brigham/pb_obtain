@@ -33,125 +33,136 @@ Future<String> obtain(
         : 'pocketbase';
     final executablePath = p.join(downloadDir.path, executableName);
 
-    if (File(executablePath).existsSync()) {
-      _log('PocketBase executable already exists at $executablePath');
-      return executablePath;
-    }
+    // Advisory lock to prevent multiple processes from downloading/extracting
+    // the same version at the same time.
+    final lockFile = File(p.join(downloadDir.path, 'obtain.lock'));
+    final raf = lockFile.openSync(mode: FileMode.append);
+    try {
+      raf.lockSync();
 
-    _log('Obtaining PocketBase ${config.githubTag}...');
-
-    // 1. Identify Platform
-    final os = osInfoImpl.osName;
-    final arch = await archInfoImpl.getCpuArchitecture();
-
-    // 2. Fetch Release Info
-    final releaseUrl =
-        'https://api.github.com/repos/pocketbase/pocketbase/releases/tags/${config.githubTag}';
-    _log('Fetching release info from $releaseUrl');
-    final response = await client.get(Uri.parse(releaseUrl));
-    if (response.statusCode != 200) {
-      throw Exception(
-        'Failed to fetch release info: ${response.statusCode} ${response.body}',
-      );
-    }
-
-    final releaseJson = jsonDecode(response.body);
-    final assets = (releaseJson['assets'] as List<dynamic>)
-        .cast<Map<String, dynamic>>();
-
-    // 3. Find Assets
-    final versionStr = config.githubTag.startsWith('v')
-        ? config.githubTag.substring(1)
-        : config.githubTag;
-    final targetName = 'pocketbase_${versionStr}_${os}_$arch.zip';
-
-    _log('Looking for asset: $targetName');
-
-    Map<String, dynamic>? binaryAsset;
-    Map<String, dynamic>? checksumAsset;
-
-    for (var asset in assets) {
-      if (asset['name'] == targetName) {
-        binaryAsset = asset;
+      // Check again after acquiring lock, another process might have finished.
+      if (File(executablePath).existsSync()) {
+        _log('PocketBase executable already exists at $executablePath');
+        return executablePath;
       }
-      if (asset['name'] == 'checksums.txt') {
-        checksumAsset = asset;
-      }
-    }
 
-    if (binaryAsset == null) {
-      throw Exception(
-        'Could not find asset $targetName in release ${config.githubTag}',
-      );
-    }
+      _log('Obtaining PocketBase ${config.githubTag}...');
 
-    if (checksumAsset == null) {
-      _log('Warning: checksums.txt not found. Verification will be skipped.');
-    }
+      // 1. Identify Platform
+      final os = osInfoImpl.osName;
+      final arch = await archInfoImpl.getCpuArchitecture();
 
-    // 4. Download
-    final zipPath = p.join(downloadDir.path, targetName);
-    _log('Downloading $targetName to $zipPath...');
-    final zipBytes = await client.readBytes(
-      Uri.parse(binaryAsset['browser_download_url'] as String),
-    );
-    File(zipPath).writeAsBytesSync(zipBytes);
+      // 2. Fetch Release Info
+      final releaseUrl =
+          'https://api.github.com/repos/pocketbase/pocketbase/releases/tags/${config.githubTag}';
+      _log('Fetching release info from $releaseUrl');
+          final response = await client.get(Uri.parse(releaseUrl));
+          if (response.statusCode != 200) {
+            throw Exception(
+              'Failed to fetch release info: ${response.statusCode} ${response.body}',
+            );
+          }
+      final releaseJson = jsonDecode(response.body);
+      final assets = (releaseJson['assets'] as List<dynamic>)
+          .cast<Map<String, dynamic>>();
 
-    // 5. Verify
-    if (checksumAsset != null) {
-      _log('Verifying checksum...');
-      final checksumsContent = await client.read(
-        Uri.parse(checksumAsset['browser_download_url'] as String),
-      );
-      // checksums.txt format: "sha256_hash  filename"
-      final lines = checksumsContent.split('\n');
-      String? expectedHash;
-      for (var line in lines) {
-        if (line.trim().endsWith(targetName)) {
-          expectedHash = line.trim().split(RegExp(r'\s+')).first;
-          break;
+      // 3. Find Assets
+      final versionStr = config.githubTag.startsWith('v')
+          ? config.githubTag.substring(1)
+          : config.githubTag;
+      final targetName = 'pocketbase_${versionStr}_${os}_$arch.zip';
+
+      _log('Looking for asset: $targetName');
+
+      Map<String, dynamic>? binaryAsset;
+      Map<String, dynamic>? checksumAsset;
+
+      for (var asset in assets) {
+        if (asset['name'] == targetName) {
+          binaryAsset = asset;
+        }
+        if (asset['name'] == 'checksums.txt') {
+          checksumAsset = asset;
         }
       }
 
-      if (expectedHash == null) {
-        _log(
-          'Warning: Could not find checksum for $targetName in checksums.txt',
+      if (binaryAsset == null) {
+        throw Exception(
+          'Could not find asset $targetName in release ${config.githubTag}',
         );
-      } else {
-        final digest = sha256.convert(zipBytes);
-        if (digest.toString() != expectedHash) {
-          throw Exception(
-            'Checksum verification failed! Expected $expectedHash, got $digest',
-          );
-        }
-        _log('Checksum verified.');
       }
-    }
 
-    // 6. Unzip
-    _log('Unzipping...');
-    final archive = ZipDecoder().decodeBytes(zipBytes);
-    for (final file in archive) {
-      final filename = file.name;
-      if (file.isFile) {
-        final data = file.content as List<int>;
-        if (filename == 'pocketbase' || filename == 'pocketbase.exe') {
-          File(executablePath)
-            ..createSync(recursive: true)
-            ..writeAsBytesSync(data);
+      if (checksumAsset == null) {
+        _log('Warning: checksums.txt not found. Verification will be skipped.');
+      }
 
-          if (!osInfoImpl.isWindows) {
-            await Process.run('chmod', ['+x', executablePath]);
+      // 4. Download
+      final zipPath = p.join(downloadDir.path, targetName);
+      _log('Downloading $targetName to $zipPath...');
+      final zipBytes = await client.readBytes(
+        Uri.parse(binaryAsset['browser_download_url'] as String),
+      );
+      File(zipPath).writeAsBytesSync(zipBytes);
+
+      // 5. Verify
+      if (checksumAsset != null) {
+        _log('Verifying checksum...');
+        final checksumsContent = await client.read(
+          Uri.parse(checksumAsset['browser_download_url'] as String),
+        );
+        // checksums.txt format: "sha256_hash  filename"
+        final lines = checksumsContent.split('\n');
+        String? expectedHash;
+        for (var line in lines) {
+          if (line.trim().endsWith(targetName)) {
+            expectedHash = line.trim().split(RegExp(r'\s+')).first;
+            break;
+          }
+        }
+
+        if (expectedHash == null) {
+          _log(
+            'Warning: Could not find checksum for $targetName in checksums.txt',
+          );
+        } else {
+          final digest = sha256.convert(zipBytes);
+          if (digest.toString() != expectedHash) {
+            throw Exception(
+              'Checksum verification failed! Expected $expectedHash, got $digest',
+            );
+          }
+          _log('Checksum verified.');
+        }
+      }
+
+      // 6. Unzip
+      _log('Unzipping...');
+      final archive = ZipDecoder().decodeBytes(zipBytes);
+      for (final file in archive) {
+        final filename = file.name;
+        if (file.isFile) {
+          final data = file.content as List<int>;
+          if (filename == 'pocketbase' || filename == 'pocketbase.exe') {
+            File(executablePath)
+              ..createSync(recursive: true)
+              ..writeAsBytesSync(data);
+
+            if (!osInfoImpl.isWindows) {
+              await Process.run('chmod', ['+x', executablePath]);
+            }
           }
         }
       }
+
+      // Cleanup zip
+      File(zipPath).deleteSync();
+
+      _log('PocketBase obtained successfully at $executablePath');
+      return executablePath;
+    } finally {
+      raf.unlockSync();
+      raf.closeSync();
     }
-
-    // Cleanup zip
-    File(zipPath).deleteSync();
-
-    _log('PocketBase obtained successfully at $executablePath');
-    return executablePath;
   } finally {
     if (httpClient == null) {
       client.close();
