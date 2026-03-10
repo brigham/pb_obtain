@@ -2,12 +2,15 @@ import 'dart:io';
 
 import 'package:dcli/dcli.dart';
 import 'package:http/http.dart' as http;
+import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
 import 'package:pb_obtain/src/tools/launch_exception.dart';
 
 import 'launch_config.dart';
 import 'obtain.dart';
 import 'pocket_base_process.dart';
+
+final _log = Logger('pb_obtain.launch');
 
 void copyDirectoryContents(String sourceDir, String destDir) {
   if (!exists(sourceDir)) return;
@@ -20,10 +23,6 @@ void _createDirIfNotExists(String path, {bool recursive = false}) {
   if (!exists(path)) {
     createDir(path, recursive: recursive);
   }
-}
-
-void _log(String message) {
-  stderr.writeln(message);
 }
 
 void _redirect(
@@ -58,7 +57,9 @@ void _redirect(
   if (toStdout) {
     stream.transform(SystemEncoding().decoder).listen(print);
   } else {
-    stream.transform(SystemEncoding().decoder).listen(_log);
+    stream
+        .transform(SystemEncoding().decoder)
+        .listen((s) => _log.fine(s.trimRight()));
   }
 }
 
@@ -77,7 +78,7 @@ Future<PocketBaseProcess> launch(
 
   if (port == 0) {
     port = await _findFreePort();
-    _log('Starting PocketBase on port $port');
+    _log.info('Starting PocketBase on port $port');
   } else {
     try {
       await http.get(Uri.parse('http://127.0.0.1:$port/api/health'));
@@ -104,14 +105,14 @@ Future<PocketBaseProcess> launch(
   bool tempDir = false;
   if (dataDirectory == null) {
     pbDir = Directory.systemTemp.createTempSync('pocketbase_').path;
-    _log('Created temporary PocketBase directory at $pbDir');
+    _log.info('Created temporary PocketBase directory at $pbDir');
     tempDir = true;
   } else {
     pbDir = dataDirectory;
     if (!exists(pbDir)) {
       createDir(pbDir, recursive: true);
     }
-    _log('Using PocketBase directory at $pbDir');
+    _log.info('Using PocketBase directory at $pbDir');
   }
 
   _createDirIfNotExists(p.join(pbDir, 'pb_data'), recursive: true);

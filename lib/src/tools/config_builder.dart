@@ -3,6 +3,9 @@ import 'dart:io';
 
 import 'package:args/args.dart';
 import 'package:checked_yaml/checked_yaml.dart';
+import 'package:logging/logging.dart';
+
+final _log = Logger('pb_obtain.config');
 
 class ConfigHelpException implements Exception {
   final String message;
@@ -32,7 +35,7 @@ abstract class ConfigBuilder<C> {
       print(e.message);
       exit(0);
     } on ConfigUserException catch (e) {
-      stderr.writeln(e.message);
+      _log.severe(e.message);
       exit(1);
     }
   }
@@ -86,10 +89,10 @@ abstract class ConfigBuilder<C> {
     if (pickedAny) {
       JsonEncoder encoder = JsonEncoder.withIndent('  ');
       String asYaml = encoder.convert(toJson(config));
-      stderr.writeln(
+      _log.info(
         'To make this configuration reusable, copy/paste the following into a YAML file:',
       );
-      stderr.writeln(asYaml);
+      _log.info(asYaml);
     }
 
     return config;

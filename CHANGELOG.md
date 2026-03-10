@@ -1,5 +1,8 @@
-# 0.7.9
+# 0.8.0
 
+* Replace internal `stderr.writeln` logging with the `logging` package.
+  Library code no longer emits any output by default; consumers can opt in
+  by setting up a `Logger.root.onRecord` listener.
 * Use advisory file locking in `obtain()` to prevent cross-process races during
   binary download and extraction.
 

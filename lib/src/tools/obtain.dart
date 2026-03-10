@@ -4,13 +4,12 @@ import 'dart:io';
 import 'package:archive/archive.dart';
 import 'package:crypto/crypto.dart';
 import 'package:http/http.dart' as http;
+import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
 import 'obtain_config.dart';
 import 'system_info.dart';
 
-void _log(String message) {
-  stderr.writeln(message);
-}
+final _log = Logger('pb_obtain.obtain');
 
 Future<String> obtain(
   ObtainConfig config, {
@@ -42,11 +41,11 @@ Future<String> obtain(
 
       // Check again after acquiring lock, another process might have finished.
       if (File(executablePath).existsSync()) {
-        _log('PocketBase executable already exists at $executablePath');
+        _log.info('PocketBase executable already exists at $executablePath');
         return executablePath;
       }
 
-      _log('Obtaining PocketBase ${config.githubTag}...');
+      _log.info('Obtaining PocketBase ${config.githubTag}...');
 
       // 1. Identify Platform
       final os = osInfoImpl.osName;
@@ -55,13 +54,13 @@ Future<String> obtain(
       // 2. Fetch Release Info
       final releaseUrl =
           'https://api.github.com/repos/pocketbase/pocketbase/releases/tags/${config.githubTag}';
-      _log('Fetching release info from $releaseUrl');
-          final response = await client.get(Uri.parse(releaseUrl));
-          if (response.statusCode != 200) {
-            throw Exception(
-              'Failed to fetch release info: ${response.statusCode} ${response.body}',
-            );
-          }
+      _log.info('Fetching release info from $releaseUrl');
+      final response = await client.get(Uri.parse(releaseUrl));
+      if (response.statusCode != 200) {
+        throw Exception(
+          'Failed to fetch release info: ${response.statusCode} ${response.body}',
+        );
+      }
       final releaseJson = jsonDecode(response.body);
       final assets = (releaseJson['assets'] as List<dynamic>)
           .cast<Map<String, dynamic>>();
@@ -72,7 +71,7 @@ Future<String> obtain(
           : config.githubTag;
       final targetName = 'pocketbase_${versionStr}_${os}_$arch.zip';
 
-      _log('Looking for asset: $targetName');
+      _log.info('Looking for asset: $targetName');
 
       Map<String, dynamic>? binaryAsset;
       Map<String, dynamic>? checksumAsset;
@@ -93,12 +92,14 @@ Future<String> obtain(
       }
 
       if (checksumAsset == null) {
-        _log('Warning: checksums.txt not found. Verification will be skipped.');
+        _log.warning(
+          'Warning: checksums.txt not found. Verification will be skipped.',
+        );
       }
 
       // 4. Download
       final zipPath = p.join(downloadDir.path, targetName);
-      _log('Downloading $targetName to $zipPath...');
+      _log.info('Downloading $targetName to $zipPath...');
       final zipBytes = await client.readBytes(
         Uri.parse(binaryAsset['browser_download_url'] as String),
       );
@@ -106,7 +107,7 @@ Future<String> obtain(
 
       // 5. Verify
       if (checksumAsset != null) {
-        _log('Verifying checksum...');
+        _log.info('Verifying checksum...');
         final checksumsContent = await client.read(
           Uri.parse(checksumAsset['browser_download_url'] as String),
         );
@@ -121,7 +122,7 @@ Future<String> obtain(
         }
 
         if (expectedHash == null) {
-          _log(
+          _log.warning(
             'Warning: Could not find checksum for $targetName in checksums.txt',
           );
         } else {
@@ -131,12 +132,12 @@ Future<String> obtain(
               'Checksum verification failed! Expected $expectedHash, got $digest',
             );
           }
-          _log('Checksum verified.');
+          _log.info('Checksum verified.');
         }
       }
 
       // 6. Unzip
-      _log('Unzipping...');
+      _log.info('Unzipping...');
       final archive = ZipDecoder().decodeBytes(zipBytes);
       for (final file in archive) {
         final filename = file.name;
@@ -157,7 +158,7 @@ Future<String> obtain(
       // Cleanup zip
       File(zipPath).deleteSync();
 
-      _log('PocketBase obtained successfully at $executablePath');
+      _log.info('PocketBase obtained successfully at $executablePath');
       return executablePath;
     } finally {
       raf.unlockSync();
