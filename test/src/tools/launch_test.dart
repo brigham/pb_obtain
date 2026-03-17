@@ -85,6 +85,42 @@ sleep 5
       );
     });
 
+    test('launches process and sets up extra template directories', () async {
+      final extraDir = Directory(p.join(tempDir.path, 'extra_hooks'))
+        ..createSync();
+      File(
+        p.join(extraDir.path, 'my_hook.js'),
+      ).writeAsStringSync('console.log("hook");');
+
+      final dataDir = Directory(p.join(tempDir.path, 'data'));
+
+      final config = LaunchConfig.executable(
+        templateDir: templateDir.path,
+        templateDirs: {
+          'pb_hooks': [extraDir.path],
+          'custom_dest': [extraDir.path],
+        },
+        port: 8090,
+        detached: false,
+        executable: ExecutableConfig(path: dummyExecutablePath),
+        homeDirectory: dataDir.path,
+      );
+
+      process = await launch(config, client: mockClient);
+
+      await Future<void>.delayed(Duration(milliseconds: 500));
+      expect(process!.isRunning, isTrue);
+
+      expect(
+        File(p.join(dataDir.path, 'pb_hooks', 'my_hook.js')).existsSync(),
+        isTrue,
+      );
+      expect(
+        File(p.join(dataDir.path, 'custom_dest', 'my_hook.js')).existsSync(),
+        isTrue,
+      );
+    });
+
     test('launches process and sets up directories (specified data dir)', () async {
       final dataDir = Directory(p.join(tempDir.path, 'data'));
 

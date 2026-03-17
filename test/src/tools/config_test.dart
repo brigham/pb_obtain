@@ -18,6 +18,30 @@ void main() {
       );
     });
 
+    test('validate fails if executable and obtain are null', () {
+      expect(
+        () => LaunchConfig.fromJson({
+          'templateDir': 'tpl',
+          'port': 8090,
+          'detached': true,
+        }),
+        throwsA(anything),
+      );
+    });
+
+    test('validate fails if executable and obtain are both set', () {
+      expect(
+        () => LaunchConfig.fromJson({
+          'templateDir': 'tpl',
+          'port': 8090,
+          'detached': true,
+          'executable': {'path': 'exe'},
+          'obtain': {'githubTag': 'v1', 'downloadDir': 'tmp'},
+        }),
+        throwsA(anything),
+      );
+    });
+
     test('validate fails with empty downloadDir', () {
       expect(
         () => ObtainConfig(githubTag: 'v0.0.0', downloadDir: ''),
@@ -118,9 +142,24 @@ void main() {
       );
     });
 
+    test('validate succeeds with templateDirs', () {
+      var _ = LaunchConfig.executable(
+        templateDir: 'tpl',
+        templateDirs: {
+          'hooks': ['dir1', 'dir2'],
+        },
+        port: 8090,
+        detached: true,
+        executable: ExecutableConfig(path: 'exe'),
+      );
+    });
+
     test('toJson/fromJson works', () {
       var config = LaunchConfig.executable(
         templateDir: 'tpl',
+        templateDirs: {
+          'hooks': ['dir1', 'dir2'],
+        },
         port: 8090,
         detached: true,
         executable: ExecutableConfig(path: 'exe'),

@@ -12,6 +12,7 @@ LaunchConfig _$LaunchConfigFromJson(Map json) =>
         json,
         allowedKeys: const [
           'templateDir',
+          'templateDirs',
           'executable',
           'obtain',
           'homeDirectory',
@@ -24,6 +25,17 @@ LaunchConfig _$LaunchConfigFromJson(Map json) =>
       );
       final val = LaunchConfig._(
         templateDir: $checkedConvert('templateDir', (v) => v as String),
+        templateDirs: $checkedConvert(
+          'templateDirs',
+          (v) =>
+              (v as Map?)?.map(
+                (k, e) => MapEntry(
+                  k as String,
+                  (e as List<dynamic>).map((e) => e as String).toList(),
+                ),
+              ) ??
+              const {},
+        ),
         port: $checkedConvert('port', (v) => (v as num).toInt()),
         detached: $checkedConvert('detached', (v) => v as bool),
         executable: $checkedConvert(
@@ -45,6 +57,7 @@ LaunchConfig _$LaunchConfigFromJson(Map json) =>
 Map<String, dynamic> _$LaunchConfigToJson(LaunchConfig instance) =>
     <String, dynamic>{
       'templateDir': instance.templateDir,
+      'templateDirs': instance.templateDirs,
       'executable': instance.executable,
       'obtain': instance.obtain,
       'homeDirectory': instance.homeDirectory,

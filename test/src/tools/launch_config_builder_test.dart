@@ -85,6 +85,54 @@ executable:
       expect(config.port, 0);
     });
 
+    test('buildConfig parses template dirs from CLI', () {
+      final config = builder.buildConfig([
+        '--template',
+        'pb_hooks:my_hooks',
+        '--template',
+        'pb_hooks:other_hooks',
+        '--template',
+        'custom_dir:custom_src',
+      ]);
+      expect(config.templateDirs, {
+        'pb_hooks': ['my_hooks', 'other_hooks'],
+        'custom_dir': ['custom_src'],
+      });
+    });
+
+    test('buildConfig parses template dirs from YAML', () {
+      final yamlPath = p.join(tempDir.path, 'config_template.yaml');
+      File(yamlPath).writeAsStringSync('''
+templateDir: "tpl"
+port: 8080
+detached: false
+templateDirs:
+  pb_hooks:
+    - my_hooks
+    - other_hooks
+  custom_dir:
+    - custom_src
+executable:
+  path: "/bin/pb"
+''');
+
+      final config = builder.buildConfig(['--yaml', yamlPath]);
+      expect(config.templateDirs, {
+        'pb_hooks': ['my_hooks', 'other_hooks'],
+        'custom_dir': ['custom_src'],
+      });
+    });
+
+    test(
+      'buildConfig throws ConfigUserException on invalid template format',
+      () {
+        expect(
+          () => builder.buildConfig(['--template', 'invalidformat']),
+          throwsA(isA<ConfigUserException>()),
+        );
+      },
+    );
+
     test('buildConfig parses port: 0 from YAML', () {
       final yamlPath = p.join(tempDir.path, 'config_port_0.yaml');
       File(yamlPath).writeAsStringSync('''

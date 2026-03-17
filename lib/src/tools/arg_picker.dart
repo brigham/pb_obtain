@@ -24,6 +24,34 @@ class ArgPicker<C> {
     return pickArg(name, (parsed) => parsed);
   }
 
+  Map<String, List<String>>? pickMultiStringMap(String name) {
+    if (base == null || results.wasParsed(name)) {
+      final value = results[name];
+      if (value != null) {
+        _pickedAny = true;
+        final list = value as List<String>;
+        final map = <String, List<String>>{};
+        for (var item in list) {
+          final parts = item.split(':');
+          if (parts.length < 2) {
+            throw ArgumentError.value(
+              item,
+              name,
+              'must be in the format <dest>:<source>',
+            );
+          }
+          final dest = parts[0];
+          final source = parts
+              .sublist(1)
+              .join(':'); // Re-join in case of Windows paths like C:\
+          map.putIfAbsent(dest, () => []).add(source);
+        }
+        return map;
+      }
+    }
+    return null;
+  }
+
   bool? pickFlag(String flagName) {
     if (base == null || results.wasParsed(flagName)) {
       _pickedAny = true;
