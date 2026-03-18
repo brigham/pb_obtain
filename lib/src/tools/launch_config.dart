@@ -29,6 +29,13 @@ class LaunchConfig with _$LaunchConfig {
   @override
   final String templateDir;
 
+  /// Extra directories to copy to the PocketBase working directory.
+  ///
+  /// The keys are the destination directory names (relative to the PocketBase
+  /// working directory), and the values are lists of source directory paths.
+  @override
+  final Map<String, List<String>> templateDirs;
+
   /// Configuration for using an existing PocketBase executable.
   ///
   /// This is mutually exclusive with [obtain].
@@ -84,6 +91,15 @@ class LaunchConfig with _$LaunchConfig {
     if (templateDir == '') {
       throw ArgumentError.value(templateDir, 'templateDir', 'cannot be empty');
     }
+    for (final dest in templateDirs.keys) {
+      if (p.isAbsolute(dest) || p.split(dest).contains('..')) {
+        throw ArgumentError.value(
+          dest,
+          'templateDirs',
+          'destination must be a relative path without ".." components',
+        );
+      }
+    }
     if (executable == null && obtain == null) {
       throw ArgumentError.value(
         executable,
@@ -108,6 +124,7 @@ class LaunchConfig with _$LaunchConfig {
   /// Usually, [LaunchConfig.executable] or [LaunchConfig.obtain] should be used instead.
   LaunchConfig._({
     required this.templateDir,
+    this.templateDirs = const {},
     required this.port,
     required this.detached,
     this.executable,
@@ -123,6 +140,7 @@ class LaunchConfig with _$LaunchConfig {
   /// Creates an empty launch configuration with default values.
   LaunchConfig.empty()
     : templateDir = '',
+      templateDirs = const {},
       port = 0,
       detached = false,
       executable = null,
@@ -135,6 +153,7 @@ class LaunchConfig with _$LaunchConfig {
   /// Creates a launch configuration using an existing PocketBase executable.
   LaunchConfig.executable({
     required this.templateDir,
+    this.templateDirs = const {},
     required this.port,
     required this.detached,
     required ExecutableConfig this.executable,
@@ -149,6 +168,7 @@ class LaunchConfig with _$LaunchConfig {
   /// Creates a launch configuration that downloads PocketBase.
   LaunchConfig.obtain({
     required this.templateDir,
+    this.templateDirs = const {},
     required this.port,
     required this.detached,
     required ObtainConfig this.obtain,
@@ -207,6 +227,11 @@ Launch settings
         help:
             'PocketBase template directory. pb_migrations, pb_hooks, and pb_public are copied to --output.',
       )
+      ..addMultiOption(
+        'template',
+        help:
+            'Extra template directories to copy. Format: <dest>:<source> (e.g. pb_hooks:my_hooks).',
+      )
       ..addOption(
         'home-dir',
         help:
@@ -245,6 +270,9 @@ Launch settings
       return port;
     });
     String? templateDir = picker.pickString('template-dir');
+    Map<String, List<String>>? templateDirs = picker.pickMultiStringMap(
+      'template',
+    );
     String? executable = picker.pickString('executable');
     String? homeDir = picker.pickString('home-dir');
     String? stdout = picker.pickString('stdout');
@@ -266,7 +294,8 @@ Launch settings
         mergedObtain == null &&
         stdout == null &&
         stderr == null &&
-        devMode == null) {
+        devMode == null &&
+        (templateDirs == null || templateDirs.isEmpty)) {
       return (config: null, pickedAny: picker.pickedAny);
     }
 
@@ -275,6 +304,7 @@ Launch settings
       config ??= LaunchConfig.empty();
       config = config.copyWith(
         templateDir: templateDir ?? config.templateDir,
+        templateDirs: templateDirs ?? config.templateDirs,
         executable: executable != null
             ? ExecutableConfig(path: executable)
             : config.executable,

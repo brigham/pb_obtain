@@ -148,6 +148,14 @@ Future<PocketBaseProcess> launch(
     p.join(pbDir, 'pb_public'),
   );
 
+  for (final entry in config.templateDirs.entries) {
+    final dest = p.join(pbDir, entry.key);
+    _createDirIfNotExists(dest, recursive: true);
+    for (final src in entry.value) {
+      copyDirectoryContents(src, dest);
+    }
+  }
+
   ProcessStartMode mode = config.detached ? .detachedWithStdio : .normal;
   var httpHost = '127.0.0.1:$port';
   final process = await Process.start(p.join(pbDir, 'pocketbase'), [
