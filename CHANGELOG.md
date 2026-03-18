@@ -1,3 +1,7 @@
+# 0.8.1
+
+* Add `templateDirs` to support more customization around building the Pocketbase directory.
+
 # 0.8.0
 
 * Replace internal `stderr.writeln` logging with the `logging` package.
