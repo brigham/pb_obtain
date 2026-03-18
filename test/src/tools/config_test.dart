@@ -109,6 +109,36 @@ void main() {
       );
     });
 
+    test('validate fails if templateDirs dest is absolute', () {
+      expect(
+        () => LaunchConfig.executable(
+          templateDir: 'tpl',
+          templateDirs: {
+            '/hooks': ['dir1', 'dir2'],
+          },
+          port: 8090,
+          detached: true,
+          executable: ExecutableConfig(path: 'exe'),
+        ),
+        throwsA(isA<ArgumentError>()),
+      );
+    });
+
+    test('validate fails if templateDirs dest contains ..', () {
+      expect(
+        () => LaunchConfig.executable(
+          templateDir: 'tpl',
+          templateDirs: {
+            '../hooks': ['dir1', 'dir2'],
+          },
+          port: 8090,
+          detached: true,
+          executable: ExecutableConfig(path: 'exe'),
+        ),
+        throwsA(isA<ArgumentError>()),
+      );
+    });
+
     test('validate fails if templateDir empty', () {
       expect(
         () => LaunchConfig.executable(

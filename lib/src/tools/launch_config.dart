@@ -91,6 +91,15 @@ class LaunchConfig with _$LaunchConfig {
     if (templateDir == '') {
       throw ArgumentError.value(templateDir, 'templateDir', 'cannot be empty');
     }
+    for (final dest in templateDirs.keys) {
+      if (p.isAbsolute(dest) || p.split(dest).contains('..')) {
+        throw ArgumentError.value(
+          dest,
+          'templateDirs',
+          'destination must be a relative path without ".." components',
+        );
+      }
+    }
     if (executable == null && obtain == null) {
       throw ArgumentError.value(
         executable,
