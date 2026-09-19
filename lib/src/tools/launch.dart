@@ -88,8 +88,6 @@ Future<PocketBaseProcess> launch(
     }
   }
 
-  final templateDir = config.templateDir;
-
   final String executable;
   if (config.obtain != null) {
     executable = await obtain(config.obtain!);
@@ -116,9 +114,6 @@ Future<PocketBaseProcess> launch(
   }
 
   _createDirIfNotExists(p.join(pbDir, 'pb_data'), recursive: true);
-  _createDirIfNotExists(p.join(pbDir, 'pb_hooks'), recursive: true);
-  _createDirIfNotExists(p.join(pbDir, 'pb_public'), recursive: true);
-  _createDirIfNotExists(p.join(pbDir, 'pb_migrations'), recursive: true);
 
   final pocketbaseLink = p.join(pbDir, 'pocketbase');
   if (exists(pocketbaseLink)) {
@@ -126,29 +121,25 @@ Future<PocketBaseProcess> launch(
   }
   createSymLink(targetPath: p.absolute(executable), linkPath: pocketbaseLink);
 
-  copyDirectoryContents(
-    p.join(templateDir, 'pb_migrations'),
-    p.join(pbDir, 'pb_migrations'),
-  );
-
-  if (tempDir) {
-    copyDirectoryContents(
-      p.join(templateDir, 'dev_migrations'),
-      p.join(pbDir, 'pb_migrations'),
-    );
+  final allTemplateDirs = <String, List<String>>{};
+  void addTemplate(String key, String source) {
+    allTemplateDirs.putIfAbsent(key, () => []).add(source);
   }
 
-  copyDirectoryContents(
-    p.join(templateDir, 'pb_hooks'),
-    p.join(pbDir, 'pb_hooks'),
-  );
-
-  copyDirectoryContents(
-    p.join(templateDir, 'pb_public'),
-    p.join(pbDir, 'pb_public'),
-  );
+  addTemplate('pb_migrations', p.join(config.templateDir, 'pb_migrations'));
+  if (tempDir) {
+    addTemplate('pb_migrations', p.join(config.templateDir, 'dev_migrations'));
+  }
+  addTemplate('pb_hooks', p.join(config.templateDir, 'pb_hooks'));
+  addTemplate('pb_public', p.join(config.templateDir, 'pb_public'));
 
   for (final entry in config.templateDirs.entries) {
+    for (final src in entry.value) {
+      addTemplate(entry.key, src);
+    }
+  }
+
+  for (final entry in allTemplateDirs.entries) {
     final dest = p.join(pbDir, entry.key);
     _createDirIfNotExists(dest, recursive: true);
     for (final src in entry.value) {
@@ -177,6 +168,17 @@ Future<PocketBaseProcess> launch(
       pbProcess.process.kill(.sigkill);
       if (mode == .normal) {
         await pbProcess.process.exitCode;
+      }
+    }
+    var exitCode = pbProcess.exitCode;
+    if (exitCode != null) {
+      switch (exitCode) {
+        case 0:
+          throw LaunchException(
+              'PocketBase unexpectedly stopped with no failure indicator.');
+        default:
+          throw LaunchException(
+              'PocketBase unexpectedly stopped with exit code $exitCode.');
       }
     }
     throw LaunchException('PocketBase failed to start in time.');
