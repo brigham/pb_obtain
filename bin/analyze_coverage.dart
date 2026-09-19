@@ -25,11 +25,7 @@ Future<Map<String, FileCoverage>> readCoverage(String filename) async {
   }
 
   final content = await file.readAsString();
-  final eol = content.contains('\r\n') ? '\r\n' : '\n';
-  final rows = CsvToListConverter(
-    fieldDelimiter: ',',
-    eol: eol,
-  ).convert(content);
+  final rows = Csv(fieldDelimiter: ',').decode(content);
 
   if (rows.isEmpty) {
     return results;

@@ -273,5 +273,69 @@ sleep 5
     });
 
     test('devMode', () {});
+
+    test(
+      'throws LaunchException with exit code when process stops immediately',
+      () async {
+        final failingExecutablePath = p.join(tempDir.path, 'failing_pb.sh');
+        File(failingExecutablePath).writeAsStringSync('''
+#!/bin/sh
+exit 7
+''');
+        Process.runSync('chmod', ['+x', failingExecutablePath]);
+
+        when(mockClient.get(any)).thenThrow(Exception('no server listening'));
+
+        final config = LaunchConfig.executable(
+          templateDir: templateDir.path,
+          port: 8093,
+          detached: false,
+          executable: ExecutableConfig(path: failingExecutablePath),
+        );
+
+        await expectLater(
+          () => launch(config, client: mockClient),
+          throwsA(
+            isA<LaunchException>().having(
+              (e) => e.message,
+              'message',
+              'PocketBase unexpectedly stopped with exit code 7.',
+            ),
+          ),
+        );
+      },
+    );
+
+    test(
+      'throws LaunchException with no failure indicator when process exits 0 immediately',
+      () async {
+        final failingExecutablePath = p.join(tempDir.path, 'exit_zero_pb.sh');
+        File(failingExecutablePath).writeAsStringSync('''
+#!/bin/sh
+exit 0
+''');
+        Process.runSync('chmod', ['+x', failingExecutablePath]);
+
+        when(mockClient.get(any)).thenThrow(Exception('no server listening'));
+
+        final config = LaunchConfig.executable(
+          templateDir: templateDir.path,
+          port: 8094,
+          detached: false,
+          executable: ExecutableConfig(path: failingExecutablePath),
+        );
+
+        await expectLater(
+          () => launch(config, client: mockClient),
+          throwsA(
+            isA<LaunchException>().having(
+              (e) => e.message,
+              'message',
+              'PocketBase unexpectedly stopped with no failure indicator.',
+            ),
+          ),
+        );
+      },
+    );
   });
 }

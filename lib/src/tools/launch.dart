@@ -175,10 +175,12 @@ Future<PocketBaseProcess> launch(
       switch (exitCode) {
         case 0:
           throw LaunchException(
-              'PocketBase unexpectedly stopped with no failure indicator.');
+            'PocketBase unexpectedly stopped with no failure indicator.',
+          );
         default:
           throw LaunchException(
-              'PocketBase unexpectedly stopped with exit code $exitCode.');
+            'PocketBase unexpectedly stopped with exit code $exitCode.',
+          );
       }
     }
     throw LaunchException('PocketBase failed to start in time.');
