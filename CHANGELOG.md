@@ -1,3 +1,7 @@
+# 0.8.2
+
+* Upgrade dcli to 10.x and other dependencies
+
 # 0.8.1
 
 * Add `templateDirs` to support more customization around building the Pocketbase directory.
