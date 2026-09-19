@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'launch_config.dart';
@@ -9,13 +9,14 @@ part of 'launch_config.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
 /// @nodoc
 mixin _$LaunchConfig {
 
- String get templateDir; Map<String, List<String>> get templateDirs; ExecutableConfig? get executable; ObtainConfig? get obtain; String? get homeDirectory; int get port; bool get detached; String? get stdout; String? get stderr; bool get devMode;
+
 /// Create a copy of LaunchConfig
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -26,16 +27,21 @@ $LaunchConfigCopyWith<LaunchConfig> get copyWith => _$LaunchConfigCopyWithImpl<L
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is LaunchConfig&&(identical(other.templateDir, templateDir) || other.templateDir == templateDir)&&const DeepCollectionEquality().equals(other.templateDirs, templateDirs)&&(identical(other.executable, executable) || other.executable == executable)&&(identical(other.obtain, obtain) || other.obtain == obtain)&&(identical(other.homeDirectory, homeDirectory) || other.homeDirectory == homeDirectory)&&(identical(other.port, port) || other.port == port)&&(identical(other.detached, detached) || other.detached == detached)&&(identical(other.stdout, stdout) || other.stdout == stdout)&&(identical(other.stderr, stderr) || other.stderr == stderr)&&(identical(other.devMode, devMode) || other.devMode == devMode));
+  final _this = this as LaunchConfig;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is LaunchConfig&&(identical(other.templateDir, _this.templateDir) || other.templateDir == _this.templateDir)&&const DeepCollectionEquality().equals(other.templateDirs, _this.templateDirs)&&(identical(other.executable, _this.executable) || other.executable == _this.executable)&&(identical(other.obtain, _this.obtain) || other.obtain == _this.obtain)&&(identical(other.homeDirectory, _this.homeDirectory) || other.homeDirectory == _this.homeDirectory)&&(identical(other.port, _this.port) || other.port == _this.port)&&(identical(other.detached, _this.detached) || other.detached == _this.detached)&&(identical(other.stdout, _this.stdout) || other.stdout == _this.stdout)&&(identical(other.stderr, _this.stderr) || other.stderr == _this.stderr)&&(identical(other.devMode, _this.devMode) || other.devMode == _this.devMode));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,templateDir,const DeepCollectionEquality().hash(templateDirs),executable,obtain,homeDirectory,port,detached,stdout,stderr,devMode);
+int get hashCode {
+  final _this = this as LaunchConfig;
+  return Object.hash(runtimeType,_this.templateDir,const DeepCollectionEquality().hash(_this.templateDirs),_this.executable,_this.obtain,_this.homeDirectory,_this.port,_this.detached,_this.stdout,_this.stderr,_this.devMode);
+}
 
 @override
 String toString() {
-  return 'LaunchConfig(templateDir: $templateDir, templateDirs: $templateDirs, executable: $executable, obtain: $obtain, homeDirectory: $homeDirectory, port: $port, detached: $detached, stdout: $stdout, stderr: $stderr, devMode: $devMode)';
+  final _this = this as LaunchConfig;
+  return 'LaunchConfig(templateDir: ${_this.templateDir}, templateDirs: ${_this.templateDirs}, executable: ${_this.executable}, obtain: ${_this.obtain}, homeDirectory: ${_this.homeDirectory}, port: ${_this.port}, detached: ${_this.detached}, stdout: ${_this.stdout}, stderr: ${_this.stderr}, devMode: ${_this.devMode})';
 }
 
 
@@ -50,7 +56,7 @@ $Res call({
 });
 
 
-
+$ExecutableConfigCopyWith<$Res>? get executable;$ObtainConfigCopyWith<$Res>? get obtain;
 
 }
 /// @nodoc
@@ -78,7 +84,31 @@ as String?,devMode: null == devMode ? _self.devMode : devMode // ignore: cast_nu
 as bool,
   ));
 }
+/// Create a copy of LaunchConfig
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ExecutableConfigCopyWith<$Res>? get executable {
+    if (_self.executable == null) {
+    return null;
+  }
 
+  return $ExecutableConfigCopyWith<$Res>(_self.executable!, (value) {
+    return _then(_self.copyWith(executable: value));
+  });
+}/// Create a copy of LaunchConfig
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ObtainConfigCopyWith<$Res>? get obtain {
+    if (_self.obtain == null) {
+    return null;
+  }
+
+  return $ObtainConfigCopyWith<$Res>(_self.obtain!, (value) {
+    return _then(_self.copyWith(obtain: value));
+  });
+}
 }
 
 

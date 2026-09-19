@@ -11,7 +11,6 @@ part 'executable_config.g.dart';
 @JsonSerializable(anyMap: true, checked: true, disallowUnrecognizedKeys: true)
 class ExecutableConfig with _$ExecutableConfig {
   /// The file path to the PocketBase executable.
-  @override
   final String path;
 
   void _validate() {

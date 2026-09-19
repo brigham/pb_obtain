@@ -16,11 +16,9 @@ part 'obtain_config.g.dart';
 @JsonSerializable(anyMap: true, checked: true, disallowUnrecognizedKeys: true)
 class ObtainConfig with _$ObtainConfig {
   /// The GitHub release tag of the PocketBase version to download (e.g., "v0.16.10").
-  @override
   final String githubTag;
 
   /// The directory where the PocketBase executable will be downloaded and extracted.
-  @override
   final String downloadDir;
 
   void _validate() {

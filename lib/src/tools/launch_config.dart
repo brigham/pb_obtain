@@ -26,65 +26,55 @@ class LaunchConfig with _$LaunchConfig {
   ///
   /// Subdirectories `pb_migrations`, `pb_hooks`, and `pb_public` from this
   /// directory will be copied to the PocketBase working directory.
-  @override
   final String templateDir;
 
   /// Extra directories to copy to the PocketBase working directory.
   ///
   /// The keys are the destination directory names (relative to the PocketBase
   /// working directory), and the values are lists of source directory paths.
-  @override
   final Map<String, List<String>> templateDirs;
 
   /// Configuration for using an existing PocketBase executable.
   ///
   /// This is mutually exclusive with [obtain].
-  @override
   final ExecutableConfig? executable;
 
   /// Configuration for downloading the PocketBase executable.
   ///
   /// This is mutually exclusive with [executable].
-  @override
   final ObtainConfig? obtain;
 
   /// The directory where PocketBase data will be stored.
   ///
   /// If provided, the `pb_data` directory will be created inside this path.
   /// If `null`, a temporary directory will be created and used.
-  @override
   final String? homeDirectory;
 
   /// The port number the PocketBase server should listen on.
   ///
   /// This must be a non-negative integer. If set to `0`, a free port will be
   /// automatically identified and used.
-  @override
   final int port;
 
   /// Whether to run the PocketBase process in detached mode.
   ///
   /// If `true`, the process is started with `ProcessStartMode.detachedWithStdio`.
   /// If `false`, it runs with `ProcessStartMode.normal`.
-  @override
   final bool detached;
 
   /// Where to redirect stdout.
   ///
   /// Can be `/dev/stdout`, `/dev/stderr`, `/dev/null`, or a file path.
   /// If a file path ends with `:a`, output will be appended.
-  @override
   final String? stdout;
 
   /// Where to redirect stderr.
   ///
   /// Can be `/dev/stdout`, `/dev/stderr`, `/dev/null`, or a file path.
   /// If a file path ends with `:a`, output will be appended.
-  @override
   final String? stderr;
 
   /// Whether to enable dev mode (print logs and sql statements)
-  @override
   final bool devMode;
 
   void _validate() {

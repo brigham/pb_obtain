@@ -1,3 +1,7 @@
+# 0.8.3
+
+* Upgrade freezed to 4.x and lints to 6.x
+
 # 0.8.2
 
 * Upgrade dcli to 10.x and other dependencies

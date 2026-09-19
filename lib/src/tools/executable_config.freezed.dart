@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'executable_config.dart';
@@ -9,13 +9,14 @@ part of 'executable_config.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
 /// @nodoc
 mixin _$ExecutableConfig {
 
- String get path;
+
 /// Create a copy of ExecutableConfig
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -26,16 +27,21 @@ $ExecutableConfigCopyWith<ExecutableConfig> get copyWith => _$ExecutableConfigCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ExecutableConfig&&(identical(other.path, path) || other.path == path));
+  final _this = this as ExecutableConfig;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ExecutableConfig&&(identical(other.path, _this.path) || other.path == _this.path));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,path);
+int get hashCode {
+  final _this = this as ExecutableConfig;
+  return Object.hash(runtimeType,_this.path);
+}
 
 @override
 String toString() {
-  return 'ExecutableConfig(path: $path)';
+  final _this = this as ExecutableConfig;
+  return 'ExecutableConfig(path: ${_this.path})';
 }
 
 

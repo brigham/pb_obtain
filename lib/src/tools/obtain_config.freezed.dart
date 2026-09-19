@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'obtain_config.dart';
@@ -9,13 +9,14 @@ part of 'obtain_config.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
 /// @nodoc
 mixin _$ObtainConfig {
 
- String get githubTag; String get downloadDir;
+
 /// Create a copy of ObtainConfig
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -26,16 +27,21 @@ $ObtainConfigCopyWith<ObtainConfig> get copyWith => _$ObtainConfigCopyWithImpl<O
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ObtainConfig&&(identical(other.githubTag, githubTag) || other.githubTag == githubTag)&&(identical(other.downloadDir, downloadDir) || other.downloadDir == downloadDir));
+  final _this = this as ObtainConfig;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ObtainConfig&&(identical(other.githubTag, _this.githubTag) || other.githubTag == _this.githubTag)&&(identical(other.downloadDir, _this.downloadDir) || other.downloadDir == _this.downloadDir));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,githubTag,downloadDir);
+int get hashCode {
+  final _this = this as ObtainConfig;
+  return Object.hash(runtimeType,_this.githubTag,_this.downloadDir);
+}
 
 @override
 String toString() {
-  return 'ObtainConfig(githubTag: $githubTag, downloadDir: $downloadDir)';
+  final _this = this as ObtainConfig;
+  return 'ObtainConfig(githubTag: ${_this.githubTag}, downloadDir: ${_this.downloadDir})';
 }
 
 
